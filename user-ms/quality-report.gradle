@@ -37,7 +37,7 @@ sonar {
     properties {
         property "sonar.projectKey", "User"
         property "sonar.host.url", "http://localhost:9000" // URL del servidor SonarQube
-        property "sonar.login", "sqp_6bd35f974a76132f97546f94a89f0053d829a077" // Token de autenticación
+        property "sonar.login", "sqp_2b3746ad6d89078627ed9ebab4d664cf995c978a" // Token de autenticación
         property "sonar.scm.disabled", "true" // Desactivar el sensor SCM
     }
 }

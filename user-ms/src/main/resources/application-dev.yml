@@ -1,0 +1,30 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    password: ${POSTGRES_USER}
+    username: ${POSTGRES_PASSWORD}
+    url: ${POSTGRES_URI}
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET}
+    expiration-time: ${JWT_EXPIRE_TIME}
+
+springdoc:
+  writer-with-default-pretty-printer: true
+  api-docs:
+    enabled: true
+    version: "openapi_3_0"
+
+  swagger-ui:
+    enabled: true
+    operations-sorter: "method"
+    tags-sorter: "alpha"
+    display-request-duration: true
+    path: /swagger-ui.html
+
+client:
+  emailservice:
+    email: ${SERVICE_EMAIL}

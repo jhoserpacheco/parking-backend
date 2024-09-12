@@ -1,0 +1,16 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+rabbitmq:
+  host: ${RABBIT_HOST}
+  virtualHost : /
+  port: ${RABBIT_PORT}
+  username : ${RABBIT_USER}
+  password : ${RABBIT_PASSWORD}
+  sslenabled: false
+  brokerTag: Mensajeria Broker
+  routing:
+    email:
+      queue: services.email.verification.queue
+      exchange: services.email.ex
+      routingKey: services.email.queue
