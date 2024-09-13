@@ -5,22 +5,29 @@ public class Constants {
     private Constants() {
         throw new IllegalStateException(UTILITY_CLASS);
     }
+
+    public enum rol {
+        SOCIO,
+        ADMIN,
+        USER
+    }
+
     public static class Message{
         private Message() {
             throw new IllegalStateException(UTILITY_CLASS);
         }
-        /* users */
-        public static final String USER_NOT_FOUND  = "User not found";
-        public static final String USER_CHANGE_ROL_SUCCESS  = "User change role success";
+        /* Vehicle */
+        public static final String VEHICLE_NOT_FOUND = "Vehicle not found";
 
-        /* auth */
-        public static final String ACCOUNT_ALREADY_VERIFIED  = "Account is already verified";
-        public static final String ACCOUNT_NOT_VERIFIED = "Account not verified. Please verify your account.";
-        public static final String ACCOUNT_VERIFIED = "Account verified successfully";
-        public static final String RESEND_CODE = "Verification code sent";
-        public static final String CODE_EXPIRED = "Verification code has expired";
-        public static final String CODE_INVALID = "Invalid verification code";
-        public static final String TOKEN_INVALID = "Invalid token";
+        /* User */
+        public static final String USER_NOT_FOUND = "User not found";
+        public static final String USER_NO_REQUIRED_ROLE = "User does not have the required role";
+
+        /* Parking */
+        public static final String PARKING_NOT_FOUND = "Parking not found";
+        public static final String PARKING_MAX_CAPACITY_FAILED = "The maximum capacity cannot be less than the number of active vehicles";
+        public static final String PARKING_DELETE_FAILED = "The parking could not be deleted because there are cars in the parking lot";
+
     }
 
     public static class ValidationMessages {
