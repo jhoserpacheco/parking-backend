@@ -1,0 +1,30 @@
+server:
+  error:
+    include-message: always
+  port: 8081
+
+spring:
+  profiles:
+    include:
+      - mq
+    active: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 10
+      max-lifetime: 1800000
+      connection-timeout: 60000
+      pool-name: "parking-hikari-pool"
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+        currentSessionContextClass: org.springframework.orm.hibernate5.SpringSessionContext
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    show-sql: true
+  jackson:
+    time-zone: America/Bogota
+    date-format: yyyy-MM-dd hh:mm:ss a
