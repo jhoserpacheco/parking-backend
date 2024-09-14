@@ -7,7 +7,7 @@ import java.util.Optional;
 
 @Service
 public interface IVehicleService {
-    void save(VehicleDto vehicle);
+    VehicleDto save(VehicleDto vehicle);
     Optional<VehicleDto> findByVehiclePlate(String vehiclePlate);
     VehicleDto updateVisit(String vehiclePlate);
 }

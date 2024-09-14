@@ -14,5 +14,5 @@ public class VehicleDto {
     private String vehiclePlate;
     private int totalVisit;
     private String model;
-    private ParkingDto parking;
+    private UUID idParking;
 }

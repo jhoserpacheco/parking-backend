@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,8 +45,8 @@ public class ParkingServiceImpl implements IParkingService {
     }
 
     @Override
-    public ParkingDto update(ParkingDto parking, String token){
-        Optional<ParkingDto> oldParking = findById(parking.getId());
+    public ParkingDto update(UUID idParking ,ParkingDto parking, String token){
+        Optional<ParkingDto> oldParking = findById(idParking);
         if (oldParking.isPresent()) {
             Parking updateParking = parkingMapper.parkingDtoToParking(oldParking.get());
             updateParking.setDirection(parking.getDirection());
@@ -55,7 +56,7 @@ public class ParkingServiceImpl implements IParkingService {
             if (validateMaxCapacity(updateParking.getCurrentCapacity(),parking.getMaxCapacity())){
                 updateParking.setMaxCapacity(parking.getMaxCapacity());
             }
-            if (validateUser(token, updateParking.getEmailUser())){
+            if (validateUser(token, parking.getEmailUser())){
                 updateParking.setEmailUser(parking.getEmailUser());
             }
             return parkingMapper.parkingToParkingDto(parkingRepository.save(updateParking));
@@ -64,13 +65,14 @@ public class ParkingServiceImpl implements IParkingService {
     }
 
     @Override
-    public void delete(UUID idParking){
+    public String delete(UUID idParking){
         Optional<ParkingDto> parking = findById(idParking);
         if(parking.isPresent()){
             if (parking.get().getCurrentCapacity() > 0){
                 throw new RuntimeException(Constants.Message.PARKING_DELETE_FAILED);
             }
             parkingRepository.deleteById(parking.get().getId());
+            return "Parking deleted successfully";
         }
         throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
     }
@@ -84,14 +86,24 @@ public class ParkingServiceImpl implements IParkingService {
         }
     }
 
+    @Override
+    public List<ParkingDto> findAll(){
+        List<Parking> parkingList = parkingRepository.findAll();
+        return parkingMapper.parkingListToParkingDtoList(parkingList);
+    }
+
+    @Override
+    public List<ParkingDto> findAllBySocio(String emailUser){
+        List<Parking> parkingList = parkingRepository.findAllByEmailUser(emailUser);
+        return parkingMapper.parkingListToParkingDtoList(parkingList);
+    }
+
     private boolean validateUser(String token, String email){
         ResponseEntity<UserDto> response = authClient.getUserByEmail(token, email);
         if (response.getStatusCode().is2xxSuccessful()) {
             UserDto user = response.getBody();
             if (user != null && user.getRol().equals(ROLE_SOCIO)) {
                 return true;
-            }else{
-                return false;
             }
         }
         throw new RuntimeException(Constants.Message.USER_NOT_FOUND);

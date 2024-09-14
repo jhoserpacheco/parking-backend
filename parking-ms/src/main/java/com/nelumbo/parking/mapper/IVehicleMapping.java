@@ -13,10 +13,10 @@ public interface IVehicleMapping {
 
     IVehicleMapping INSTANCE = Mappers.getMapper( IVehicleMapping.class );
 
-    @Mapping(source = "parking.id", target = "id")
+    @Mapping(source = "parking.id", target = "idParking")
     VehicleDto vehicleToVehicleDto(Vehicle vehicle);
 
-    @Mapping(source = "id", target = "parking.id")
+    @Mapping(source = "idParking", target = "parking.id")
     Vehicle vehicleDtoToVehicle(VehicleDto vehicleDto);
 
     List<VehicleDto> toDtoList(List<Vehicle> vehicle);
