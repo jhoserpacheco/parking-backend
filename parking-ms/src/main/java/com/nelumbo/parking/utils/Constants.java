@@ -27,7 +27,10 @@ public class Constants {
         public static final String PARKING_NOT_FOUND = "Parking not found";
         public static final String PARKING_MAX_CAPACITY_FAILED = "The maximum capacity cannot be less than the number of active vehicles";
         public static final String PARKING_DELETE_FAILED = "The parking could not be deleted because there are cars in the parking lot";
-
+        public static final String VEHICLE_NO_REGISTER_PARKING = "Vehicle does not have a registered parking";
+        public static final String REGISTER_ENTRY = "Registration entry";
+        public static final String REGISTER_EXIT = "Registration exit";
+        public static final String REGISTER_ENTRY_FAILED = "This vehicle is already registered in another parking. Please exit first.";
     }
 
     public static class ValidationMessages {
