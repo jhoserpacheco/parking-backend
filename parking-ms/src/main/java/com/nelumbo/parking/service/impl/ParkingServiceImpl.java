@@ -7,6 +7,7 @@ import com.nelumbo.parking.feign.UserDto;
 import com.nelumbo.parking.mapper.IParkingMapping;
 import com.nelumbo.parking.repository.IParkingRepository;
 import com.nelumbo.parking.service.IParkingService;
+import com.nelumbo.parking.utils.AuthUtils;
 import com.nelumbo.parking.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -116,6 +117,17 @@ public class ParkingServiceImpl implements IParkingService {
         throw new RuntimeException(Constants.Message.PARKING_MAX_CAPACITY_FAILED);
     }
 
-
+    public void isParkingSocioAsociated(UUID parkingId){
+        AuthUtils authUtils = new AuthUtils();
+        Optional<Parking> parking = parkingRepository.findById(parkingId);
+        if(parking.isPresent()){
+            if (authUtils.getEmailAuthentication().equals(parking.get().getEmailUser())){
+                return;
+            }else{
+                throw new RuntimeException(Constants.Message.PARKING_UNAUTHORIZED);
+            }
+        }
+        throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
+    }
 
 }

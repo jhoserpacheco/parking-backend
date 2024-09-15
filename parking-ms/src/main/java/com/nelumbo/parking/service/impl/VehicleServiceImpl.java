@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +48,22 @@ public class VehicleServiceImpl implements IVehicleService {
             return vehicleMapper.vehicleToVehicleDto(vehicleDto.get());
         }
         throw new RuntimeException(Constants.Message.VEHICLE_NOT_FOUND);
+
+    }
+
+    public void updateParking(String vehiclePlate, UUID idParking) {
+        Optional<Parking> parking = parkingRepository.findById(idParking);
+        if (parking.isPresent()) {
+            Optional<Vehicle> vehicleDto = vehicleRepository.findByVehiclePlate(vehiclePlate);
+            if (vehicleDto.isPresent()) {
+                vehicleDto.get().setParking(parking.get());
+                vehicleRepository.saveAndFlush(vehicleDto.get());
+            }else{
+                throw new RuntimeException(Constants.Message.VEHICLE_NOT_FOUND);
+            }
+        }else {
+            throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
+        }
 
     }
 

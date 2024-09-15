@@ -35,10 +35,13 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
         if (parking.isEmpty()) {
             throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
         }
+        parkingService.isParkingSocioAsociated(parkingId);
         Optional<VehicleDto> existingVehicle = vehicleService.findByVehiclePlate(vehicleDto.getVehiclePlate());
         validateRegister(vehicleDto.getVehiclePlate());
         VehicleDto vehicleToUse;
         if (existingVehicle.isPresent()) {
+            vehicleDto.setIdParking(parkingId);
+            vehicleService.updateParking(vehicleDto.getVehiclePlate(), parkingId);
             vehicleToUse = vehicleService.updateVisit(vehicleDto.getVehiclePlate());
         } else {
             vehicleDto.setIdParking(parkingId);
@@ -66,6 +69,7 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
     }
 
     public RegisterParkingDto registerExit(VehicleDto vehicle, UUID parkingId) {
+        parkingService.isParkingSocioAsociated(parkingId);
         Optional<VehicleDto> vehicleDto = vehicleService.findByVehiclePlate(vehicle.getVehiclePlate());
         if (vehicleDto.isPresent() && vehicleDto.get().getIdParking().equals(parkingId)) {
             Optional<ParkingHistoryDto> parkingHistory = findParkingHistoryByVehiclePlateAndParkingId(
