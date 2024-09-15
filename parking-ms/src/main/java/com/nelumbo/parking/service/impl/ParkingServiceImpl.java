@@ -121,7 +121,8 @@ public class ParkingServiceImpl implements IParkingService {
         AuthUtils authUtils = new AuthUtils();
         Optional<Parking> parking = parkingRepository.findById(parkingId);
         if(parking.isPresent()){
-            if (authUtils.getEmailAuthentication().equals(parking.get().getEmailUser())){
+            String ROLE_ADMIN = "ADMIN";
+            if (authUtils.getEmailAuthentication().equals(parking.get().getEmailUser()) || authUtils.getRolAuthentication().equals(ROLE_ADMIN)){
                 return;
             }else{
                 throw new RuntimeException(Constants.Message.PARKING_UNAUTHORIZED);

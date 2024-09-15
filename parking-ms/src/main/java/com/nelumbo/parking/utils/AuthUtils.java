@@ -13,7 +13,7 @@ public class AuthUtils {
     }
     public String getRolAuthentication(){
         UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userDto.getEmail();
+        return userDto.getRol();
     }
     public UserDto getUserAuthentication(){
         UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

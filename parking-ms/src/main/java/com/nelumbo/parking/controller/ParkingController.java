@@ -2,6 +2,7 @@ package com.nelumbo.parking.controller;
 
 import com.nelumbo.parking.dto.ParkingDto;
 import com.nelumbo.parking.service.impl.ParkingServiceImpl;
+import com.nelumbo.parking.service.impl.VehicleServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class ParkingController {
 
     private final ParkingServiceImpl parkingService;
+    private final VehicleServiceImpl vehicleService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -53,6 +55,12 @@ public class ParkingController {
     @GetMapping(path = "/socio/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ParkingDto>> getAllParkingBySocio(@PathVariable String email) {
         return ResponseEntity.status(HttpStatus.OK).body(parkingService.findAllBySocio(email));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SOCIO')")
+    @GetMapping(path = "/{idParking}/detail", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getDetailVehicleParking(@PathVariable UUID idParking) {
+        return ResponseEntity.status(HttpStatus.OK).body(vehicleService.findAllVehicleActiveParking(idParking));
     }
 
 }

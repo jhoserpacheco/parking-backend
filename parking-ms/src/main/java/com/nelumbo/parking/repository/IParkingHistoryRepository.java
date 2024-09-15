@@ -17,6 +17,7 @@ public interface IParkingHistoryRepository extends JpaRepository<ParkingHistory,
 
     Optional<ParkingHistory> findByVehicleVehiclePlateAndParkingIdAndExitDateIsNull(String plate, UUID parkingId);
     Optional<ParkingHistory> findByVehicleVehiclePlateAndExitDateIsNull(String plate);
+    List<ParkingHistory> findAllByParkingIdAndExitDateIsNull(UUID parkingId);
 
     // top10 vehiculos mas registrados en los parqueaderos [V]
     List<ParkingHistory> findTop10ByOrderByVehicleTotalVisitDesc();
