@@ -33,11 +33,13 @@ public class StatsServiceImpl implements IStatsService {
 
     //admin y socio
     // top10 vehiculos mas registrados en los parqueaderos
+    @Override
     public List<VehicleDto> Top10MostRegisteredVehicles(){
         return vehicleMapping.toDtoList(vehicleRepository.findTop10ByOrderByTotalVisitDesc());
     }
 
     // top10 vehiculos que se han regisrtado en x parqueadero y cuantas veces
+    @Override
     public List<VehicleDto> Top10MostRegisteredByParkingId(UUID parkingId){
         List<ParkingHistory> parkingHistoryList = parkingHistoryRepository.findTop10ByParkingIdOrderByVehicleTotalVisitDesc(
                 parkingId);
@@ -45,6 +47,7 @@ public class StatsServiceImpl implements IStatsService {
     }
 
     // verificar en cada parqueadero cual esta por 1ra vez
+    @Override
     public List<VehicleDto> getAllVehiclesRegisteredForTheFirstTime(){
         int totalVisit = 1;
         List<ParkingHistory> parkingHistoryList = parkingHistoryRepository
@@ -54,6 +57,7 @@ public class StatsServiceImpl implements IStatsService {
 
     // socio
     // ganancias de hoy, semana, mes, año de x parquadero
+    @Override
     public Double getEarningsForToday(UUID parkingId) {
         parkingService.isParkingSocioAsociated(parkingId);
         LocalDate today = LocalDate.now();
@@ -62,6 +66,7 @@ public class StatsServiceImpl implements IStatsService {
         return parkingHistoryRepository.getTotalEarnings(parkingId, startOfDay, endOfDay);
     }
 
+    @Override
     public Double getEarningsForWeek(UUID parkingId) {
         parkingService.isParkingSocioAsociated(parkingId);
         LocalDate today = LocalDate.now();
@@ -71,6 +76,7 @@ public class StatsServiceImpl implements IStatsService {
         return parkingHistoryRepository.getTotalEarnings(parkingId, start, end);
     }
 
+    @Override
     public Double getEarningsForMonth(UUID parkingId) {
         parkingService.isParkingSocioAsociated(parkingId);
         LocalDate today = LocalDate.now();
@@ -80,6 +86,7 @@ public class StatsServiceImpl implements IStatsService {
         return parkingHistoryRepository.getTotalEarnings(parkingId, start, end);
     }
 
+    @Override
     public Double getEarningsForYear(UUID parkingId) {
         parkingService.isParkingSocioAsociated(parkingId);
         LocalDate today = LocalDate.now();
@@ -92,6 +99,7 @@ public class StatsServiceImpl implements IStatsService {
 
     //admin
     // top 3 socios con mas ingresos de vehiculos en la semana actual y mostrar cantidad vehiculos
+    @Override
     public List<StatsUserDto> top3SociosMostRegisteredCurrentWeek(){
         LocalDate today = LocalDate.now();
         LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -105,6 +113,7 @@ public class StatsServiceImpl implements IStatsService {
     }
 
     // top 3 de parqueaderos con mayor ganancia
+    @Override
     public List<StatsParkingDto> top3ParkingsWithHighestEarningsThisWeek(){
         LocalDate today = LocalDate.now();
         LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));

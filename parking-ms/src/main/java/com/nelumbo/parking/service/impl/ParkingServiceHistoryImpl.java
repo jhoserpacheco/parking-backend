@@ -30,6 +30,7 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
     private final IVehicleMapping vehicleMapping = IVehicleMapping.INSTANCE;
     private final IParkingMapping parkingMapping = IParkingMapping.INSTANCE;
 
+    @Override
     public RegisterParkingDto registerEntry(VehicleDto vehicleDto, UUID parkingId) {
         Optional<ParkingDto> parking = parkingService.findById(parkingId);
         if (parking.isEmpty()) {
@@ -51,7 +52,8 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
         return new RegisterParkingDto(parkingId, Constants.Message.REGISTER_ENTRY,vehicleToUse.getVehiclePlate(), parkingHistory.getEntryDate());
     }
 
-    private ParkingHistory save(ParkingDto parking, VehicleDto vehicle){
+    @Override
+    public ParkingHistory save(ParkingDto parking, VehicleDto vehicle){
         ParkingHistory parkingHistory = new ParkingHistory();
         parkingHistory.setParking(parkingMapping.parkingDtoToParking(parking));
         parkingHistory.setVehicle(vehicleMapping.vehicleDtoToVehicle(vehicle));
@@ -68,6 +70,7 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
         }
     }
 
+    @Override
     public RegisterParkingDto registerExit(VehicleDto vehicle, UUID parkingId) {
         parkingService.isParkingSocioAsociated(parkingId);
         Optional<VehicleDto> vehicleDto = vehicleService.findByVehiclePlate(vehicle.getVehiclePlate());
@@ -82,7 +85,8 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
         throw new RuntimeException(Constants.Message.VEHICLE_NO_REGISTER_PARKING);
     }
 
-    private ParkingHistoryDto update(ParkingHistoryDto parkingHistoryDto) {
+    @Override
+    public ParkingHistoryDto update(ParkingHistoryDto parkingHistoryDto) {
         Optional<ParkingHistory> parking = parkingHistoryRepository
                 .findByVehicleVehiclePlateAndParkingIdAndExitDateIsNull(parkingHistoryDto.getVehiclePlate(), parkingHistoryDto.getIdParking());
         if (parking.isPresent()) {
