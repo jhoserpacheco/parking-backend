@@ -31,18 +31,23 @@ public class Constants {
         public static final String REGISTER_ENTRY = "Registration entry";
         public static final String REGISTER_EXIT = "Registration exit";
         public static final String REGISTER_ENTRY_FAILED = "This vehicle is already registered in another parking. Please exit first.";
+        public static final String PARKING_UNAUTHORIZED = "Unauthorized";
     }
 
     public static class ValidationMessages {
         private ValidationMessages() {
             throw new IllegalStateException(UTILITY_CLASS);
         }
-        public static final String EMAIL_INVALID = "Email must be valid";
-        public static final String EMAIL_REQUIRED = "Email is required";
-        public static final String PASSWORD_REQUIRED = "Password is required";
-        public static final String PASSWORD_SIZE = "Password must be at least 8 characters long";
-        public static final String FULL_NAME_REQUIRED = "Full name is required";
-        public static final String VERIFICATION_CODE_SIZE = "Verification code must be exactly 6 digits";
+        public static final String NAME_REQUIRED = "The name is required.";
+        public static final String MAX_CAPACITY_REQUIRED = "The maximum capacity is required.";
+        public static final String MAX_CAPACITY_POSITIVE = "The maximum capacity must be a positive number.";
+        public static final String COST_HOUR_REQUIRED = "The cost per hour is required.";
+        public static final String COST_HOUR_POSITIVE = "The cost per hour must be a positive value.";
+        public static final String DIRECTION_REQUIRED = "The direction is required.";
+        public static final String EMAIL_REQUIRED = "The email of the user is required.";
+        public static final String EMAIL_FORMAT_INVALID = "The email format is invalid.";
+        public static final String VEHICLE_PLATE_REQUIRED = "Vehicle plate is required.";
+        public static final String MODEL_REQUIRED = "Model is required.";
     }
 
     public static class EmailTemplate{
