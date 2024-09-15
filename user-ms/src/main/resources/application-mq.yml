@@ -13,4 +13,4 @@ rabbitmq:
     email:
       queue: services.email.verification.queue
       exchange: services.email.ex
-      routingKey: services.email.queue
+      routingKey: services.email.verification.queue
