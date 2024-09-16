@@ -12,10 +12,10 @@ security:
     expiration-time: ${JWT_EXPIRE_TIME}
 
 client:
-  url: http://localhost:8080
+  url: http://ms-user:8080
   emailservice:
     email: ${SERVICE_EMAIL}
-    url: http://localhost:8081
+    url: http://ms-parking:8081
 
 
 mail:

@@ -15,5 +15,5 @@ security:
 
 user:
   client:
-    url: http://localhost:8080
-    url-email: http://localhost:8082
+    url: http://ms-user:8080
+    url-email: http://ms-mail:8082

@@ -1,0 +1,107 @@
+{
+   "rabbit_version":"3.13.7",
+   "rabbitmq_version":"3.13.7",
+   "product_name":"RabbitMQ",
+   "product_version":"3.13.7",
+   "users":[
+      {
+         "name":"guest",
+         "password_hash":"WjInBgwi90/3D0Zmwq0PwhHsBUROC7MNq4XfcaduiWzReUla",
+         "hashing_algorithm":"rabbit_password_hashing_sha256",
+         "tags":[
+            "administrator"
+         ],
+         "limits":{
+            
+         }
+      }
+   ],
+   "vhosts":[
+      {
+         "name":"/",
+         "description":"Default virtual host",
+         "tags":[
+            
+         ],
+         "metadata":{
+            "description":"Default virtual host",
+            "tags":[
+               
+            ]
+         }
+      }
+   ],
+   "permissions":[
+      {
+         "user":"guest",
+         "vhost":"/",
+         "configure":".*",
+         "write":".*",
+         "read":".*"
+      }
+   ],
+   "topic_permissions":[
+      
+   ],
+   "parameters":[
+      
+   ],
+   "policies":[
+      
+   ],
+   "queues":[
+      {
+         "name":"services.email.verification.queue",
+         "vhost":"/",
+         "durable":true,
+         "auto_delete":false,
+         "arguments":{
+            
+         }
+      },
+      {
+         "name":"services.email.parking.queue",
+         "vhost":"/",
+         "durable":true,
+         "auto_delete":false,
+         "arguments":{
+            
+         }
+      }
+   ],
+   "exchanges":[
+      {
+         "name":"services.email.ex",
+         "vhost":"/",
+         "type":"direct",
+         "durable":true,
+         "auto_delete":false,
+         "internal":false,
+         "arguments":{
+            
+         }
+      }
+   ],
+   "bindings":[
+      {
+         "source":"services.email.ex",
+         "vhost":"/",
+         "destination":"services.email.parking.queue",
+         "destination_type":"queue",
+         "routing_key":"services.email.parking.queue",
+         "arguments":{
+            
+         }
+      },
+      {
+         "source":"services.email.ex",
+         "vhost":"/",
+         "destination":"services.email.verification.queue",
+         "destination_type":"queue",
+         "routing_key":"services.email.verification.queue",
+         "arguments":{
+            
+         }
+      }
+   ]
+}
