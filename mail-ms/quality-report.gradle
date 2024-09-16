@@ -1,0 +1,43 @@
+jacocoTestReport {
+    dependsOn test
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    'com/nelumbo/mail/MailApplication.class',
+                    'com/nelumbo/mail/config/**',
+                    'com/nelumbo/mail/dto/**',
+                    'com/nelumbo/mail/entity/**'
+            ])
+        }))
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn test
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    'com/nelumbo/mail/MailApplication.class',
+                    'com/nelumbo/mail/config/**',
+                    'com/nelumbo/mail/dto/**',
+                    'com/nelumbo/mail/entity/**'
+            ])
+        }))
+    }
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.0
+            }
+        }
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "Mail"
+        property "sonar.host.url", "http://localhost:9000" // URL del servidor SonarQube
+        property "sonar.login", "sqp_9ad475511e3299cbd664ad0ae62e012afdf5a772" // Token de autenticación
+        property "sonar.scm.disabled", "true" // Desactivar el sensor SCM
+    }
+}

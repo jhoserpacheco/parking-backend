@@ -1,0 +1,15 @@
+rabbitmq:
+  host: localhost
+  virtualHost : /
+  port: 5672
+  username : guest
+  password : guest
+  sslenabled: false
+  brokerTag: Mensajeria Broker
+  routing:
+    email:
+      queue:
+        user: services.email.verification.queue
+        parking: services.email.parking.queue
+      exchange: services.email.ex
+      routingKey: services.email.parking.queue

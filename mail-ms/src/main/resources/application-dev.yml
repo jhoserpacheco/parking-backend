@@ -1,0 +1,25 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    password: ${POSTGRES_USER}
+    username: ${POSTGRES_PASSWORD}
+    url: ${POSTGRES_URI}
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET}
+    expiration-time: ${JWT_EXPIRE_TIME}
+
+client:
+  url: http://localhost:8080
+  emailservice:
+    email: ${SERVICE_EMAIL}
+    url: http://localhost:8081
+
+
+mail:
+  host: ${MAIL_HOST}
+  port: ${MAIL_PORT}
+  username: ${MAIL_USERNAME}
+  password: ${MAIL_PASSWORD}
