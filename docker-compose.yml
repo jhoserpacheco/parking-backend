@@ -1,0 +1,83 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: parking_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+    networks:
+      - parking-network
+      
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" 
+      - "15672:15672" 
+    volumes:
+      - ./rabbitmq-definitions.json:/etc/rabbitmq/definitions.json
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbitmq_management load_definitions "/etc/rabbitmq/definitions.json"
+    networks:
+      - parking-network
+      
+  ms-mail:
+    build:
+      context: ./mail-ms
+      dockerfile: Dockerfile
+    container_name: ms-mail
+    env_file:
+      - ./mail-ms/.env
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - parking-network
+
+  ms-user:
+    build:
+      context: ./user-ms
+      dockerfile: Dockerfile
+    container_name: ms-user
+    env_file:
+      - ./user-ms/.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - parking-network      
+      
+  ms-parking:
+    build:
+      context: ./parking-ms
+      dockerfile: Dockerfile
+    container_name: ms-parking
+    env_file:
+      - ./parking-ms/.env
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - parking-network
+      
+volumes:
+  rabbitmq-data:
+    driver: local
+  postgres_data:
+
+networks:
+  parking-network:
