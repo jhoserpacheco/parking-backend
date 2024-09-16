@@ -41,7 +41,10 @@ El jar quedará en .../build/libs/user-0.0.1-SNAPSHOT.jar
 
 ### Variables de entorno
 
-Crear un archivo .env siguiendo el ejemplo -> [sample.env](sample.env) 
+Crear un archivo .env siguiendo el ejemplo -> [sample.env](sample.env)
+
+(Tanto en rabbit o postgres en vez de localhost colocar 'postgres' o 'rabbitmq')
+
 
 ```bash
 POSTGRES_USER=postgresUserSample
