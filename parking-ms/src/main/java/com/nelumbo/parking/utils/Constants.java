@@ -49,6 +49,8 @@ public class Constants {
         public static final String VEHICLE_PLATE_REQUIRED = "Vehicle plate is required.";
         public static final String VEHICLE_REGEX_VALIDATION = "Vehicle plate is invalid, 6 digit";
         public static final String MODEL_REQUIRED = "Model is required.";
+        public static final String EMAIL_SUBJECT_REQUIRED = "The email subject is required.";
+        public static final String EMAIL_BODY_REQUIRED = "The email body is required.";
     }
 
     public static class EmailTemplate{

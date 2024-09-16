@@ -16,3 +16,4 @@ security:
 user:
   client:
     url: http://localhost:8080
+    url-email: http://localhost:8082
