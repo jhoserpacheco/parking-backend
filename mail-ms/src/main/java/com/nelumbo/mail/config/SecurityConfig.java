@@ -1,5 +1,11 @@
 package com.nelumbo.mail.config;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +16,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -18,11 +26,21 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
+    private static final String[] SECURITY_WHITELIST = {
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/swagger-resources",
+            "/swagger-ui/**",
+
+            "/health"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(SECURITY_WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
@@ -31,5 +49,25 @@ public class SecurityConfig {
                 );
 
         return http.build();
+    }
+
+    @Bean
+    OpenAPI customOpenApi(){
+        Server serverDev = new Server();
+        serverDev.setUrl("http://localhost:8082");
+        serverDev.setDescription("Development");
+
+        return new OpenAPI()
+                .info(new Info().title("API EMAIL").version("1.0").description("This API exposes endpoints to manage emails."))
+                .servers(List.of(serverDev))
+                .addSecurityItem(new SecurityRequirement().addList("Bearer Auth"))
+                .components(
+                        new Components()
+                                .addSecuritySchemes("Bearer Auth" , new SecurityScheme()
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT"))
+                );
+
     }
 }
