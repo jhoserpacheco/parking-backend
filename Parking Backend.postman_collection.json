@@ -1,0 +1,1062 @@
+{
+	"info": {
+		"_postman_id": "72e7da5a-5410-458c-8ff4-e6c02e688422",
+		"name": "Parking Backend",
+		"description": "This template contains a boilerplate for documentation that you can quickly customize and reuse.\n\n### How to use this template:\n\n- Replace the content given brackets (()) with your API's details.\n- Tips are formatted in `codespan` - feel free to read and remove them.\n    \n\n---\n\n`Start with a brief overview of what your API offers.`\n\nThe ((product name)) provides many API products, tools, and resources that enable you to ((add product value here)).\n\n`You can also list the APIs you offer, link to the relevant pages, or do both in this section.`\n\n## **Getting started guide**\n\n`List the steps or points required to start using your APIs. Make sure to cover everything required to reach success with your API as quickly as possible.`\n\nTo start using the ((add APIs here)), you need to -\n\n`The points given below are from The Postman API's documentation. You can reference it to write your own getting started guide.`\n\n- You must use a valid API Key to send requests to the API endpoints. You can get your API key from Postman's [integrations dashboard](https://go.postman.co/settings/me/api-keys).\n- The API has [rate and usage limits](https://learning.postman.com/docs/developer/postman-api/postman-api-rate-limits/).\n- The API only responds to HTTPS-secured communications. Any requests sent via HTTP return an HTTP 301 redirect to the corresponding HTTPS resources.\n- The API returns request responses in JSON format. When an API request returns an error, it is sent in the JSON response as an error key.\n    \n\n## Authentication\n\n`Add details on the authorization keys/tokens required, steps that cover how to get them, and the relevant error codes.`\n\nThe ((product name)) API uses ((add your API's authorization type)) for authentication.\n\n`The details given below are from the Postman API's documentation. You can reference it to write your own authentication section.`\n\nPostman uses API keys for authentication. You can generate a Postman API key in the [API keys](https://postman.postman.co/settings/me/api-keys) section of your Postman account settings.\n\nYou must include an API key in each request to the Postman API with the X-Api-Key request header.\n\n### Authentication error response\n\nIf an API key is missing, malformed, or invalid, you will receive an HTTP 401 Unauthorized response code.\n\n## Rate and usage limits\n\n`Use this section to cover your APIs' terms of use. Include API limits, constraints, and relevant error codes, so consumers understand the permitted API usage and practices.`\n\n`The example given below is from The Postman API's documentation. Use it as a reference to write your APIs' terms of use.`\n\nAPI access rate limits apply at a per-API key basis in unit time. The limit is 300 requests per minute. Also, depending on your plan, you may have usage limits. If you exceed either limit, your request will return an HTTP 429 Too Many Requests status code.\n\nEach API response returns the following set of headers to help you identify your use status:\n\n| Header | Description |\n| --- | --- |\n| `X-RateLimit-Limit` | The maximum number of requests that the consumer is permitted to make per minute. |\n| `X-RateLimit-Remaining` | The number of requests remaining in the current rate limit window. |\n| `X-RateLimit-Reset` | The time at which the current rate limit window resets in UTC epoch seconds. |\n\n### 503 response\n\nAn HTTP `503` response from our servers indicates there is an unexpected spike in API access traffic. The server is usually operational within the next five minutes. If the outage persists or you receive any other form of an HTTP `5XX` error, [contact support](https://support.postman.com/hc/en-us/requests/new/).\n\n### **Need some help?**\n\n`Add links that customers can refer to whenever they need help.`\n\nIn case you have questions, go through our tutorials ((link to your video or help documentation here)). Or visit our FAQ page ((link to the relevant page)).\n\nOr you can check out our community forum, there’s a good chance our community has an answer for you. Visit our developer forum ((link to developer forum)) to review topics, ask questions, and learn from others.\n\n`You can also document or add links to libraries, code examples, and other resources needed to make a request.`",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11090663"
+	},
+	"item": [
+		{
+			"name": "ms-user",
+			"item": [
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "SignUp",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"jhoser@gmail.com\",\r\n    \"password\": \"jhoser\",\r\n    \"fullName\": \"jhoser\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ms-user-url}}/auth/signup",
+									"host": [
+										"{{ms-user-url}}"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Verify",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"jhoserpacheco@gmail.com\",\r\n    \"verificationCode\": \"154427\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ms-user-url}}/auth/verify",
+									"host": [
+										"{{ms-user-url}}"
+									],
+									"path": [
+										"auth",
+										"verify"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Resend verify code",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{ms-user-url}}/auth/resend?email=admin@gmail.com",
+									"host": [
+										"{{ms-user-url}}"
+									],
+									"path": [
+										"auth",
+										"resend"
+									],
+									"query": [
+										{
+											"key": "email",
+											"value": "admin@gmail.com"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "// admin\r\n\r\n{\r\n    \"email\": \"admin@mail.com\",\r\n    \"password\": \"admin\"\r\n}\r\n\r\n/* socio1\r\n{\r\n    \"email\": \"socio1@gmail.com\",\r\n    \"password\": \"socio1\"\r\n}\r\n\r\n*/\r\n/* socio2\r\n{\r\n    \"email\": \"socio2@gmail.com\",\r\n    \"password\": \"socio2\"\r\n}\r\n\r\n*/",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ms-user-url}}/auth/login",
+									"host": [
+										"{{ms-user-url}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validate Token",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-user-url}}/auth/validate",
+									"host": [
+										"{{ms-user-url}}"
+									],
+									"path": [
+										"auth",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "Get User By Rol",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-user-url}}/user/getAllByRol?idRol=1",
+									"host": [
+										"{{ms-user-url}}"
+									],
+									"path": [
+										"user",
+										"getAllByRol"
+									],
+									"query": [
+										{
+											"key": "idRol",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change Rol",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "idRol",
+										"value": "1",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{ms-user-url}}/user/changeRol?email=admin@gmail.com&idRol=2",
+									"host": [
+										"{{ms-user-url}}"
+									],
+									"path": [
+										"user",
+										"changeRol"
+									],
+									"query": [
+										{
+											"key": "email",
+											"value": "admin@gmail.com"
+										},
+										{
+											"key": "idRol",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get user by email",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-user-url}}/user/getByEmail?email=jhoserpacheco@gmail.com",
+									"host": [
+										"{{ms-user-url}}"
+									],
+									"path": [
+										"user",
+										"getByEmail"
+									],
+									"query": [
+										{
+											"key": "email",
+											"value": "jhoserpacheco@gmail.com"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "The `/me` endpoints let you manage information about the authenticated user."
+		},
+		{
+			"name": "ms-parking",
+			"item": [
+				{
+					"name": "Parking",
+					"item": [
+						{
+							"name": "Save parking",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\"  :  \"Parking Caobos\",\r\n    \"maxCapacity\" : 40,\r\n    \"costHour\" : 700,\r\n    \"direction\" : \"Barrio caobos\",\r\n    \"emailUser\" : \"jhoserpacheco@gmail.com\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ms-parking-url}}/parking",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"parking"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Parking by id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/parking/5fb1d3ec-9af2-48c4-bbd9-8213867771c2",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"parking",
+										"5fb1d3ec-9af2-48c4-bbd9-8213867771c2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get active vehicles by parkingid",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/parking/5fb1d3ec-9af2-48c4-bbd9-8213867771c2/detail",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"parking",
+										"5fb1d3ec-9af2-48c4-bbd9-8213867771c2",
+										"detail"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update parking",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\" : \"5e98f1c1-a7a2-4f92-834e-0a449754193b\", \r\n    \"name\": \"Parking Caobos\",\r\n    \"maxCapacity\": 40,\r\n    \"costHour\": 1200.0,\r\n    \"direction\": \"Barrio caobos\",\r\n    \"emailUser\": \"jhoserpacheco@gmail.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ms-parking-url}}/parking/5e98f1c1-a7a2-4f92-834e-0a449754193b",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"parking",
+										"5e98f1c1-a7a2-4f92-834e-0a449754193b"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Parking",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/parking/5e98f1c1-a7a2-4f92-834e-0a449754193b",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"parking",
+										"5e98f1c1-a7a2-4f92-834e-0a449754193b"
+									],
+									"query": [
+										{
+											"key": "idParking",
+											"value": "ba9cc508-a3d2-4e54-b96d-7c8c58ca145c",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get all parking",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/parking",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"parking"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get all parking by socio",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/parking/socio/jhoserpacheco@gmail.com",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"parking",
+										"socio",
+										"jhoserpacheco@gmail.com"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Parking History",
+					"item": [
+						{
+							"name": "Register entry vehicle",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-socio}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"vehiclePlate\" : \"AB9T65\",\r\n    \"model\" : \"Moto roja\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ms-parking-url}}/parking/history/register-entry/bafec90e-a954-4afb-ba3e-02045d8129b1",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"parking",
+										"history",
+										"register-entry",
+										"bafec90e-a954-4afb-ba3e-02045d8129b1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register entry vehicle Copy",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-socio}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"vehiclePlate\" : \"AB9T65\",\r\n    \"model\" : \"Moto roja\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ms-parking-url}}/parking/history/register-exit/bafec90e-a954-4afb-ba3e-02045d8129b1",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"parking",
+										"history",
+										"register-exit",
+										"bafec90e-a954-4afb-ba3e-02045d8129b1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Stats",
+					"item": [
+						{
+							"name": "Earnings",
+							"item": [
+								{
+									"name": "Earning day",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token-socio}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{ms-parking-url}}/stats/earnings/day/5fb1d3ec-9af2-48c4-bbd9-8213867771c2",
+											"host": [
+												"{{ms-parking-url}}"
+											],
+											"path": [
+												"stats",
+												"earnings",
+												"day",
+												"5fb1d3ec-9af2-48c4-bbd9-8213867771c2"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Earning Year",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token-socio}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{ms-parking-url}}/stats/earnings/year/5fb1d3ec-9af2-48c4-bbd9-8213867771c2",
+											"host": [
+												"{{ms-parking-url}}"
+											],
+											"path": [
+												"stats",
+												"earnings",
+												"year",
+												"5fb1d3ec-9af2-48c4-bbd9-8213867771c2"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Earnig week",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token-socio}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{ms-parking-url}}/stats/earnings/week/5fb1d3ec-9af2-48c4-bbd9-8213867771c2",
+											"host": [
+												"{{ms-parking-url}}"
+											],
+											"path": [
+												"stats",
+												"earnings",
+												"week",
+												"5fb1d3ec-9af2-48c4-bbd9-8213867771c2"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Earning month",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token-socio}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{ms-parking-url}}/stats/earnings/month/5fb1d3ec-9af2-48c4-bbd9-8213867771c2",
+											"host": [
+												"{{ms-parking-url}}"
+											],
+											"path": [
+												"stats",
+												"earnings",
+												"month",
+												"5fb1d3ec-9af2-48c4-bbd9-8213867771c2"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Top 10 Most Registered Vehicles",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-socio}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/stats/top10-most-registered-vehicle",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"stats",
+										"top10-most-registered-vehicle"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Top 10 Most Registered Vehicles by parking id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-socio}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/stats/top10-most-registered-vehicle-by-parkingId?parkingId=f2a8f1b2-1234-4abc-8765-abcdef123456",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"stats",
+										"top10-most-registered-vehicle-by-parkingId"
+									],
+									"query": [
+										{
+											"key": "parkingId",
+											"value": "f2a8f1b2-1234-4abc-8765-abcdef123456"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Vehicles Registered for first time",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-socio}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/stats/get-vehicles-registered-first-time",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"stats",
+										"get-vehicles-registered-first-time"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Top 3 socio most vehicle registered this week",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-socio}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/stats/top3-socio-most-vehicle-registered-this-week",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"stats",
+										"top3-socio-most-vehicle-registered-this-week"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Top 3 parking most earning",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-socio}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/stats/top3-parking-most-earning",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"stats",
+										"top3-parking-most-earning"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Email",
+					"item": [
+						{
+							"name": "Send email",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"emailTo\": \"socio@gmail.com\",\r\n    \"subject\": \"Vehicle registed\",\r\n    \"text\": \"Este es un mensaje de prueba para el body\",\r\n    \"vehiclePlate\": \"AB9T65\",\r\n    \"parkingName\": \"Parking Caobos\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ms-parking-url}}/email/send",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"email",
+										"send"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get status email",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token-admin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ms-parking-url}}/email/cbe331ae-7d04-4259-88ea-4e63a28abe87",
+									"host": [
+										"{{ms-parking-url}}"
+									],
+									"path": [
+										"email",
+										"cbe331ae-7d04-4259-88ea-4e63a28abe87"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "ms-mail",
+			"item": [
+				{
+					"name": "Send email",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-admin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emailTo\": \"socio@gmail.com\",\r\n    \"subject\": \"Vehicle registed\",\r\n    \"text\": \"Este es un mensaje de prueba para el body\",\r\n    \"vehiclePlate\": \"AB9T65\",\r\n    \"parkingName\": \"Parking Caobos\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ms-email-url}}/email/send",
+							"host": [
+								"{{ms-email-url}}"
+							],
+							"path": [
+								"email",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get status email",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-admin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-email-url}}/email/cbe331ae-7d04-4259-88ea-4e63a28abe87",
+							"host": [
+								"{{ms-email-url}}"
+							],
+							"path": [
+								"email",
+								"cbe331ae-7d04-4259-88ea-4e63a28abe87"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "X-API-Key",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token-admin",
+			"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTcyNTUxMDg0OSwiZXhwIjoxNzI1NTMyNDQ5LCJyb2wiOiJBRE1JTiJ9.aJM_aiiFUUyV8MY8f3A6-GB9DXsfvO4t9ICfHuxuvDA0s3Dr5HZ99GnYEH8vfkMT"
+		},
+		{
+			"key": "token-socio",
+			"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJqaG9zZXJwYWNoZWNvQGdtYWlsLmNvbSIsImlhdCI6MTcyNjI2Mzg1NiwiZXhwIjoxNzI2Mjg1NDU2LCJyb2wiOiJTT0NJTyJ9.txpw-9ahhGKFm2n4ShL56eBYobREP-v109RjUZ0TpkwzLOpb3rD7HBRf3XdnGaue",
+			"type": "string"
+		},
+		{
+			"key": "ms-user-url",
+			"value": "http://127.0.0.1:8080"
+		},
+		{
+			"key": "ms-parking-url",
+			"value": "http://127.0.0.1:8081",
+			"type": "string"
+		},
+		{
+			"key": "ms-email-url",
+			"value": "http://127.0.0.1:8082",
+			"type": "string"
+		}
+	]
+}
