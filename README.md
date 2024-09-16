@@ -1,6 +1,6 @@
 # Descripción General
 
-El Sistema de Gestión de Parqueaderos es una solución backend robusta y escalable diseñada para la gestión eficiente de 
+El Sistema de Gestión de Parqueaderos es una solución backend diseñada para la gestión eficiente de 
 vehículos en parqueaderos. Este proyecto está construido con Spring Boot y sigue parcialmente arquitectura de microservicios,
 lo que garantiza con base de datos por microservicio. Consta de tres microservicios principales:
 Gestión de Usuarios, Gestión de Parqueaderos y Notificaciones por Correo, que se comunican entre sí utilizando Feign 
@@ -61,7 +61,7 @@ Clonar el repositorio
 git clone https://github.com/jhoserpacheco/parking-backend
 ```
 Generar el .jar de cada microservicio
-[explicado aquí](user-ms/README.md#Generate-jar)
+[explicado aquí](user-ms/README.md#generate-jar)
 
 Para levantar el backend ejecutamos:
 ```bash
