@@ -25,8 +25,8 @@ public class EmailController {
     @Operation(summary = "Send email", description = "Sends a parking-related email if the vehicle exists. Requires ADMIN role.", tags = { "Email" })
     @PostMapping(path = "/send")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResponseEmailDto> email(@RequestHeader("Authorization") String token, @RequestBody EmailParkingDto emailParkingDto) {
-        return ResponseEntity.ok(emailService.sendEmailIfVehicleExists(token, emailParkingDto));
+    public ResponseEntity<ResponseEmailDto> email(@RequestBody EmailParkingDto emailParkingDto) {
+        return ResponseEntity.ok(emailService.sendEmailIfVehicleExists(emailParkingDto));
     }
 
     @Operation(summary = "Get email by ID", description = "Retrieves the details of a sent email by its ID. Requires ADMIN role.", tags = { "Email" })

@@ -1,6 +1,6 @@
 package com.nelumbo.parking.mgsbroker;
 
-import com.nelumbo.parking.mgsbroker.domain.EmailDto;
+import com.nelumbo.parking.feign.EmailParkingDto;
 import com.nelumbo.parking.mgsbroker.domain.RabbitBindingRoute;
 import com.nelumbo.parking.mgsbroker.event.RespuestaBroker;
 import jakarta.annotation.Resource;
@@ -20,7 +20,7 @@ public class RabbitQueueSender {
     @Autowired
     private RabbitBindingRoute rabbitBindingRoute;
 
-    public RespuestaBroker send(EmailDto email){
+    public RespuestaBroker send(EmailParkingDto email){
         try {
             CorrelationData confirmaCorrelation  = new CorrelationData();
             productorRabbit.convertAndSend(rabbitBindingRoute.getExchange(),
