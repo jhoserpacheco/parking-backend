@@ -8,6 +8,8 @@ Client y/o RabbitMQ.
 El sistema utiliza PostgreSQL como base de datos, y toda la infraestructura está contenedorizada 
 utilizando Docker Compose para facilitar la implementación y el escalado.
 
+---
+
 ## Características
 ### Roles de Usuario
 
@@ -39,6 +41,8 @@ email: socio2@gmail.com
 pass: socio2 
 ```
 
+---
+
 ### Tecnologías Utilizadas
   - Java 17: Lenguaje de programación del backend.
   - Spring Boot: Framework utilizado para construir la aplicación.
@@ -48,11 +52,15 @@ pass: socio2
   - PostgreSQL: Sistema de base de datos para almacenamiento persistente.
   - Docker & Docker Compose: Para la contenedorización y orquestación de los servicios.
 
+---
+
 ### Requisitos del Sistema
   - Docker: Asegúrate de tener Docker instalado para ejecutar el sistema en contenedores.
   - PostgreSQL: La base de datos está contenedorizada, no se requiere configuración separada.
   - RabbitMQ: Gestionado a través de Docker, utilizado para la notificación por correo y la comunicación entre servicios.
 
+
+---
 
 ### Instalación
 Clonar el repositorio 
@@ -70,14 +78,23 @@ docker-compose up -d --build
 ```
 
 El docker-compose se encarga de: 
-- Arrancar todos los microservicios (ms-user, ms-parking, ms-email) en Spring Boot.
+- Arrancar el eureka service discovery 
+- Levantar el api gateway
+- Ejecutar todos los microservicios (ms-user, ms-parking, ms-email) en Spring Boot.
 - Crear las base de datos Postqreslq del respectivo microservicio junto con data de prueba.
 - Crear el broker de mensajería de RabbitMQ con sus respectivos queue, exchange y routing key. 
 
+---
+
+### Infraestructura
+<div style="align-items: center">
+    <img src="db-init/Infraestructure%20Parking%20Backend.png" alt="Centered Image" />
+</div>
+
 README de cada microservicio:
-- [ms-user](user-ms)
-- [ms-parking](parking-ms)
-- [ms-email](mail-ms)
+- [MS-USUARIOS](user-ms)
+- [MS-PARQUEADERO](parking-ms)
+- [MS-EMAIL](mail-ms)
 
 
 
