@@ -1,30 +1,31 @@
 package com.nelumbo.mail.entity;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.UUID;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
-@Entity
-@Table(name = "email_parking")
+@Document( value = "email_parking")
 public class EmailParking {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
-    @Column(name = "from_email")
+    private ObjectId id;
+    @Field(name = "from_email")
     private String emailFrom;
-    @Column(name = "to_email")
+    @Field(name = "to_email")
     private String emailTo;
     private String subject;
     private String text;
-    @Column(name = "vehicle_plate")
+    @Field(name = "vehicle_plate")
     private String vehiclePlate;
-    @Column(name = "parking_name")
+    @Field(name = "parking_name")
     private String parkingName;
     private String status;
 }
