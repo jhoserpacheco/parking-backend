@@ -11,7 +11,7 @@ public class RabbitColasConfig {
     public RabbitBindingRoute rutaBroker(
             @Value("${rabbitmq.routing.email.exchange}")
             String exchange,
-            @Value("${rabbitmq.routing.email.routingKey}")
+            @Value("${rabbitmq.routing.email.routingKey.user}")
             String routingKey){
         return RabbitBindingRoute.builder().exchange(exchange).routingKey(routingKey).build();
     }

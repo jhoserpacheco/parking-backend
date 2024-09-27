@@ -1,4 +1,6 @@
 server:
+  servlet:
+    context-path: /api/parking-ms/
   error:
     include-message: always
   port: 8081

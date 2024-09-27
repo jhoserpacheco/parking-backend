@@ -1,7 +1,9 @@
 package com.nelumbo.mail.mgsbroker;
 
 import com.nelumbo.mail.dto.EmailDto;
+import com.nelumbo.mail.dto.EmailParkingDto;
 import com.nelumbo.mail.mgsbroker.event.BrokerService;
+import com.nelumbo.mail.service.impl.EmailParkingServiceImpl;
 import com.nelumbo.mail.service.impl.EmailServiceImpl;
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,7 @@ public class RabbitQueueConsumer {
 
     private final BrokerService brokerService;
     private final EmailServiceImpl emailServiceImpl;
-
+    private final EmailParkingServiceImpl emailParkingServiceImpl;
 
     @RabbitListener(queues = "${rabbitmq.routing.email.queue.user}", containerFactory = "listenerRabbit")
     public void receiveVerificationEmail(@Payload EmailDto emailDto, Channel channel,
@@ -34,11 +36,11 @@ public class RabbitQueueConsumer {
     }
 
     @RabbitListener(queues = "${rabbitmq.routing.email.queue.parking}", containerFactory = "listenerRabbit")
-    public void receiveParkingEmail(@Payload EmailDto emailDto, Channel channel,
-                        @Header(AmqpHeaders.DELIVERY_TAG) long tag){
+    public void receiveParkingEmail(@Payload EmailParkingDto emailDto, Channel channel,
+                                    @Header(AmqpHeaders.DELIVERY_TAG) long tag){
         try {
             Thread.sleep(3000);
-            emailServiceImpl.sendEmail(emailDto);
+            emailParkingServiceImpl.sendEmail(emailDto);
             brokerService.confirmarAck(channel, tag);
         }catch (Exception errorGeneral){
             brokerService.confirmarNAck(channel, tag);

@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: mail-ms
   config:
     import: optional:file:.env[.properties]
   data:
@@ -9,6 +11,11 @@ security:
   jwt:
     secret-key: ${JWT_SECRET}
     expiration-time: ${JWT_EXPIRE_TIME}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
 springdoc:
   writer-with-default-pretty-printer: true

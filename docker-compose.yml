@@ -29,6 +29,16 @@ services:
     networks:
       - parking-network
       
+  discover-service:
+    build:
+      context: ./discover-service
+      dockerfile: Dockerfile
+    container_name: discover-service
+    ports:
+      - "8761:8761"
+    networks:
+      - parking-network
+
   ms-mail:
     build:
       context: ./mail-ms
@@ -39,6 +49,7 @@ services:
     ports:
       - "8082:8082"
     depends_on:
+      - eureka-server
       - postgres
       - rabbitmq
     networks:
@@ -54,6 +65,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      - eureka-server
       - postgres
       - rabbitmq
     networks:
@@ -69,10 +81,24 @@ services:
     ports:
       - "8081:8081"
     depends_on:
+      - eureka-server
       - postgres
       - rabbitmq
     networks:
       - parking-network
+      
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8079:8079"
+    depends_on:
+      - eureka-server
+    networks:
+      - parking-network
+      
       
 volumes:
   rabbitmq-data:

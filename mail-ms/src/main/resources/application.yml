@@ -1,4 +1,6 @@
 server:
+  servlet:
+    context-path: /api/mail-ms/
   error:
     include-message: always
   port: 8082
