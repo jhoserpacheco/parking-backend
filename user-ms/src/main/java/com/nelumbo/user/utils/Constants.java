@@ -12,6 +12,7 @@ public class Constants {
         /* users */
         public static final String USER_NOT_FOUND  = "User not found";
         public static final String USER_CHANGE_ROL_SUCCESS  = "User change role success";
+        public static final String IS_ADMIN_DEFAULT = "The default admin role cannot be changed.";
 
         /* auth */
         public static final String ACCOUNT_ALREADY_VERIFIED  = "Account is already verified";
@@ -30,9 +31,13 @@ public class Constants {
         public static final String EMAIL_INVALID = "Email must be valid";
         public static final String EMAIL_REQUIRED = "Email is required";
         public static final String PASSWORD_REQUIRED = "Password is required";
+        public static final String ID_ROL_REQUIRED = "Id rol is required";
         public static final String PASSWORD_SIZE = "Password must be at least 8 characters long";
         public static final String FULL_NAME_REQUIRED = "Full name is required";
         public static final String VERIFICATION_CODE_SIZE = "Verification code must be exactly 6 digits";
+        public static final String NO_EXIST = "This is not the web page you are looking for.";
+        public static final String NUMBER_NEGATIVE = "The number must be a positive number.";
+
     }
 
     public static class EmailTemplate{

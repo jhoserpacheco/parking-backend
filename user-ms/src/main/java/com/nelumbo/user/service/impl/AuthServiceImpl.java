@@ -11,6 +11,7 @@ import com.nelumbo.user.repository.IRolRepository;
 import com.nelumbo.user.service.IAuthService;
 import com.nelumbo.user.utils.Constants;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,17 +46,17 @@ public class AuthServiceImpl implements IAuthService {
         rolUser.ifPresent(user::setRol);
         user.setVerificationExp(LocalDateTime.now().plusMinutes(15));
         User userSaved = userServiceImpl.save(user);
-        sendVerificationEmail(userSaved);
+        //sendVerificationEmail(userSaved);
         return userSaved;
     }
 
     @Override
-    public User authenticate(LoginUserDto input) {
+    public User authenticate(LoginUserDto input) throws BadRequestException {
         User user = userServiceImpl.findByEmail(input.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(Constants.Message.USER_NOT_FOUND));
 
         if (!user.isEnabled()) {
-            throw new RuntimeException(Constants.Message.ACCOUNT_NOT_VERIFIED);
+            throw new BadRequestException(Constants.Message.ACCOUNT_NOT_VERIFIED);
         }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -67,16 +68,16 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
-    public void verifyUser(VerifyUserDto input) {
+    public void verifyUser(VerifyUserDto input) throws BadRequestException {
         User user = userServiceImpl.findByEmail(input.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(Constants.Message.USER_NOT_FOUND));
 
         if (isVerificationCodeExpired(user)) {
-            throw new RuntimeException(Constants.Message.CODE_EXPIRED);
+            throw new BadRequestException(Constants.Message.CODE_EXPIRED);
         }
 
         if (!user.getVerificationCode().equals(input.getVerificationCode())) {
-            throw new RuntimeException(Constants.Message.CODE_INVALID);
+            throw new BadRequestException(Constants.Message.CODE_INVALID);
         }
         enableUser(user);
     }
@@ -93,12 +94,12 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
-    public void resendVerificationCode(String email)  {
+    public void resendVerificationCode(String email) throws BadRequestException {
         Optional<User> optionalUser = userServiceImpl.findByEmail(email);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (user.isEnabled()) {
-                throw new RuntimeException(Constants.Message.ACCOUNT_ALREADY_VERIFIED);
+                throw new BadRequestException(Constants.Message.ACCOUNT_ALREADY_VERIFIED);
             }
             user.setVerificationCode(generateVerificationCode());
             user.setVerificationExp(LocalDateTime.now().plusHours(1));
@@ -131,7 +132,7 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
-    public UserDto validate(String token) {
+    public UserDto validate(String token) throws BadRequestException {
         String username = extractTokenUsername(token);
         User user = userServiceImpl.findByEmail(username).orElseThrow(() -> new UserNotFoundException(Constants.Message.USER_NOT_FOUND));
         if (validateToken(token)) {
@@ -142,7 +143,7 @@ public class AuthServiceImpl implements IAuthService {
                     .rol(user.getRol().getName())
                     .build();
         }else {
-            throw new RuntimeException(Constants.Message.TOKEN_INVALID);
+            throw new BadRequestException(Constants.Message.TOKEN_INVALID);
         }
 
     }
