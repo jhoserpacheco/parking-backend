@@ -1,6 +1,7 @@
 package com.nelumbo.parking.feign;
 
 import com.nelumbo.parking.dto.VehicleDto;
+import com.nelumbo.parking.exceptions.VehicleNotFoundException;
 import com.nelumbo.parking.service.impl.VehicleServiceImpl;
 import com.nelumbo.parking.utils.Constants;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class EmailClientImpl {
         if (vehicle.isPresent()) {
             return emailClient.sendEmail(token, emailParkingDto);
         } else {
-            throw new RuntimeException(Constants.Message.VEHICLE_NOT_FOUND);
+            throw new VehicleNotFoundException(Constants.Message.VEHICLE_NOT_FOUND);
         }
     }
 }

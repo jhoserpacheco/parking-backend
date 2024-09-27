@@ -1,7 +1,9 @@
 package com.nelumbo.parking.repository;
 
 import com.nelumbo.parking.entity.ParkingHistory;
+import com.nelumbo.parking.projection.EstimateCostProjection;
 import feign.Param;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -46,7 +48,27 @@ public interface IParkingHistoryRepository extends JpaRepository<ParkingHistory,
             "ORDER BY totalEarnings DESC")
     List<Object[]> getTop3ParkingsWithHighestEarnings(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
+    @Query(value = "SELECT ph.* FROM parking_history ph " +
+            "LEFT JOIN vehicle v ON ph.vehicle_plate = v.vehicle_plate " +
+            "LEFT JOIN parking p ON ph.parking_id = p.id " +
+            "WHERE p.name iLIKE %:query%",
+            countQuery = "SELECT count(*) FROM parking_history ph " +
+                    "LEFT JOIN vehicle v ON ph.vehicle_plate = v.vehicle_plate " +
+                    "LEFT JOIN parking p ON ph.parking_id = p.id",
+            nativeQuery = true)
+    Page<ParkingHistory> findAllOrdered(Pageable pageable, String query);
 
 
+    @Query(value = "SELECT p.name AS parkingName, " +
+                    "p.cost_hour AS cost, " +
+                    "p.max_capacity AS maxCapacity, " +
+                    "SUM(CEIL(EXTRACT(EPOCH FROM (NOW() - ph.entry_date)) / 3600)) * p.cost_hour AS estimateCost " +
+                    "FROM parking p " +
+                    "JOIN parking_history ph ON p.id = ph.parking_id " +
+                    "WHERE ph.exit_date IS NULL " +
+                    "AND p.id = :idParking " +
+                    "GROUP BY p.name, p.cost_hour, p.max_capacity",
+            nativeQuery = true)
+    EstimateCostProjection findEstimateCostByParkingId(UUID idParking);
 
 }

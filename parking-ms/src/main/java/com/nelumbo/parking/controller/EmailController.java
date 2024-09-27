@@ -6,6 +6,7 @@ import com.nelumbo.parking.feign.EmailParkingDto;
 import com.nelumbo.parking.feign.ResponseEmailDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,14 +26,14 @@ public class EmailController {
     @Operation(summary = "Send email", description = "Sends a parking-related email if the vehicle exists. Requires ADMIN role.", tags = { "Email" })
     @PostMapping(path = "/send")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResponseEmailDto> email(@RequestHeader("Authorization") String token, @RequestBody EmailParkingDto emailParkingDto) {
+    public ResponseEntity<ResponseEmailDto> email(@RequestHeader("Authorization") String token, @Valid @RequestBody EmailParkingDto emailParkingDto) {
         return ResponseEntity.ok(emailService.sendEmailIfVehicleExists(token, emailParkingDto));
     }
 
     @Operation(summary = "Get email by ID", description = "Retrieves the details of a sent email by its ID. Requires ADMIN role.", tags = { "Email" })
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResponseEmailDto> email(@RequestHeader("Authorization") String token, @PathVariable UUID id) {
+    public ResponseEntity<ResponseEmailDto> email(@RequestHeader("Authorization") String token, @PathVariable String id) {
         return ResponseEntity.ok(emailClient.getEmailById(token, id));
     }
 

@@ -21,10 +21,12 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
+        format-sql: true
         dialect: org.hibernate.dialect.PostgreSQL9Dialect
         currentSessionContextClass: org.springframework.orm.hibernate5.SpringSessionContext
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect
     show-sql: true
+    open-in-view: false
   jackson:
     time-zone: America/Bogota
     date-format: yyyy-MM-dd hh:mm:ss a

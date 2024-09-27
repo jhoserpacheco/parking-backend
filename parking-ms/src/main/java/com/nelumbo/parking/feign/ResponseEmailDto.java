@@ -10,6 +10,6 @@ import java.util.UUID;
 @Setter
 @RequiredArgsConstructor
 public class ResponseEmailDto {
-    private UUID id;
+    private String id;
     private String status;
 }

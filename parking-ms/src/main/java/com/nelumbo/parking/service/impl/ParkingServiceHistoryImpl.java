@@ -5,14 +5,21 @@ import com.nelumbo.parking.dto.ParkingHistoryDto;
 import com.nelumbo.parking.dto.RegisterParkingDto;
 import com.nelumbo.parking.dto.VehicleDto;
 import com.nelumbo.parking.entity.ParkingHistory;
+import com.nelumbo.parking.exceptions.ParkingNotFoundException;
+import com.nelumbo.parking.exceptions.VehicleNotFoundException;
 import com.nelumbo.parking.mapper.IParkingHistoryMapping;
 import com.nelumbo.parking.mapper.IParkingMapping;
 import com.nelumbo.parking.mapper.IVehicleMapping;
+import com.nelumbo.parking.projection.EstimateCostProjection;
 import com.nelumbo.parking.repository.IParkingHistoryRepository;
 import com.nelumbo.parking.service.IParkingServiceHistory;
 import com.nelumbo.parking.utils.Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -32,9 +39,10 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
 
     @Override
     public RegisterParkingDto registerEntry(VehicleDto vehicleDto, UUID parkingId) {
+        boolean entry = true;
         Optional<ParkingDto> parking = parkingService.findById(parkingId);
         if (parking.isEmpty()) {
-            throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
+            throw new ParkingNotFoundException(Constants.Message.PARKING_NOT_FOUND);
         }
         parkingService.isParkingSocioAsociated(parkingId);
         Optional<VehicleDto> existingVehicle = vehicleService.findByVehiclePlate(vehicleDto.getVehiclePlate());
@@ -48,6 +56,7 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
             vehicleDto.setIdParking(parkingId);
             vehicleToUse = vehicleService.save(vehicleDto);
         }
+        parkingService.updateCurrentCapacity(parkingId, entry);
         ParkingHistory parkingHistory = save(parking.get(), vehicleToUse);
         return new RegisterParkingDto(parkingId, Constants.Message.REGISTER_ENTRY,vehicleToUse.getVehiclePlate(), parkingHistory.getEntryDate());
     }
@@ -66,23 +75,25 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
         Optional<ParkingHistory> parkingHistory = parkingHistoryRepository.
                 findByVehicleVehiclePlateAndExitDateIsNull(vehiclePlate);
         if (parkingHistory.isPresent()) {
-            throw new RuntimeException(Constants.Message.REGISTER_ENTRY_FAILED);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,Constants.Message.REGISTER_ENTRY_FAILED);
         }
     }
 
     @Override
     public RegisterParkingDto registerExit(VehicleDto vehicle, UUID parkingId) {
+        boolean entry = false;
         parkingService.isParkingSocioAsociated(parkingId);
         Optional<VehicleDto> vehicleDto = vehicleService.findByVehiclePlate(vehicle.getVehiclePlate());
         if (vehicleDto.isPresent() && vehicleDto.get().getIdParking().equals(parkingId)) {
             Optional<ParkingHistoryDto> parkingHistory = findParkingHistoryByVehiclePlateAndParkingId(
                     vehicleDto.get().getVehiclePlate(), parkingId);
             if (parkingHistory.isPresent()) {
+                parkingService.updateCurrentCapacity(parkingId, entry);
                 ParkingHistoryDto parkingHistoryDto = update(parkingHistory.get());
                 return new RegisterParkingDto(parkingId, Constants.Message.REGISTER_EXIT, vehicleDto.get().getVehiclePlate(), parkingHistoryDto.getExitDate());
             }
         }
-        throw new RuntimeException(Constants.Message.VEHICLE_NO_REGISTER_PARKING);
+        throw new VehicleNotFoundException(Constants.Message.VEHICLE_NO_REGISTER_PARKING);
     }
 
     @Override
@@ -98,7 +109,7 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
 
             return parkingHistoryMapping.parkingHistoryToParkingHistoryDto(updateParkingHistory);
         }
-        throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
+        throw new ParkingNotFoundException(Constants.Message.PARKING_NOT_FOUND);
     }
 
     public Optional<ParkingHistoryDto> findParkingHistoryByVehiclePlateAndParkingId(String vehiclePlate, UUID parkingId) {
@@ -113,4 +124,16 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
         long totalHour = (totalMin % 60 == 0) ? totalMin : totalMin + 1;
         return costHour * totalHour;
     }
+
+    public Page<ParkingHistory> getParkingHistorySorted(Pageable pageable, String query) {
+        if (query==null) query = "";
+        return parkingHistoryRepository.findAllOrdered(pageable, query);
+    }
+
+    public EstimateCostProjection getEstimateCostProjection(UUID parkingId) {
+        parkingService.isParkingSocioAsociated(parkingId);
+        return parkingHistoryRepository.findEstimateCostByParkingId(parkingId);
+    }
+
+
 }

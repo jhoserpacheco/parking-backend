@@ -51,6 +51,7 @@ public class Constants {
         public static final String MODEL_REQUIRED = "Model is required.";
         public static final String EMAIL_SUBJECT_REQUIRED = "The email subject is required.";
         public static final String EMAIL_BODY_REQUIRED = "The email body is required.";
+        public static final String NO_EXIST = "This is not the web page you are looking for.";
     }
 
     public static class EmailTemplate{

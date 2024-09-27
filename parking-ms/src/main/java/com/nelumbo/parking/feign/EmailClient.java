@@ -12,6 +12,6 @@ public interface EmailClient {
     ResponseEmailDto sendEmail(@RequestHeader("Authorization") String token, @RequestBody EmailParkingDto emailParkingDto);
 
     @GetMapping(path = "/email/{id}")
-    ResponseEmailDto getEmailById(@RequestHeader("Authorization") String token, @PathVariable UUID id);
+    ResponseEmailDto getEmailById(@RequestHeader("Authorization") String token, @PathVariable String id);
 
 }

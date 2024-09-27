@@ -28,5 +28,14 @@ springdoc:
 
 user:
   client:
-    url: http://ms-user:8080
-    url-email: http://ms-mail:8082
+    url: http://localhost:8080
+    url-email: http://localhost:8082
+
+#logging:
+    #  level:
+      #org:
+      #hibernate:
+      #  SQL: DEBUG
+      #  type:
+      #    descriptor:
+    #      sql: TRACE
