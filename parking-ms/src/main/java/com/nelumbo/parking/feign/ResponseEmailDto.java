@@ -12,6 +12,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class ResponseEmailDto {
-    private UUID id;
+    private String id;
     private String status;
 }

@@ -12,7 +12,7 @@ public interface AuthClient {
     @GetMapping("/auth/validate")
     ResponseEntity<UserDto> validateToken(@RequestHeader("Authorization") String token);
 
-    @GetMapping("/user/getByEmail")
+    @GetMapping("/user/by-email")
     ResponseEntity<UserDto> getUserByEmail(@RequestHeader("Authorization") String token, @RequestParam String email);
 
 }

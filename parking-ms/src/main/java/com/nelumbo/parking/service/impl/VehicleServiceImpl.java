@@ -3,6 +3,8 @@ package com.nelumbo.parking.service.impl;
 import com.nelumbo.parking.dto.VehicleDto;
 import com.nelumbo.parking.entity.Parking;
 import com.nelumbo.parking.entity.Vehicle;
+import com.nelumbo.parking.exceptions.ParkingNotFoundException;
+import com.nelumbo.parking.exceptions.VehicleNotFoundException;
 import com.nelumbo.parking.mapper.IVehicleMapping;
 import com.nelumbo.parking.repository.IParkingHistoryRepository;
 import com.nelumbo.parking.repository.IParkingRepository;
@@ -35,7 +37,7 @@ public class VehicleServiceImpl implements IVehicleService {
             newVehicle.setParking(parking.get());
             return vehicleMapper.vehicleToVehicleDto(vehicleRepository.save(newVehicle));
         }
-        throw new RuntimeException("Parking not found");
+        throw new ParkingNotFoundException(Constants.Message.PARKING_NOT_FOUND);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class VehicleServiceImpl implements IVehicleService {
             vehicleRepository.saveAndFlush(vehicleDto.get());
             return vehicleMapper.vehicleToVehicleDto(vehicleDto.get());
         }
-        throw new RuntimeException(Constants.Message.VEHICLE_NOT_FOUND);
+        throw new VehicleNotFoundException(Constants.Message.VEHICLE_NOT_FOUND);
 
     }
 
@@ -72,10 +74,10 @@ public class VehicleServiceImpl implements IVehicleService {
                 vehicleDto.get().setParking(parking.get());
                 vehicleRepository.saveAndFlush(vehicleDto.get());
             }else{
-                throw new RuntimeException(Constants.Message.VEHICLE_NOT_FOUND);
+                throw new VehicleNotFoundException(Constants.Message.VEHICLE_NOT_FOUND);
             }
         }else {
-            throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
+            throw new ParkingNotFoundException(Constants.Message.PARKING_NOT_FOUND);
         }
 
     }

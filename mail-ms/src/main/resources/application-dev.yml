@@ -3,10 +3,9 @@ spring:
     name: mail-ms
   config:
     import: optional:file:.env[.properties]
-  datasource:
-    password: ${POSTGRES_USER}
-    username: ${POSTGRES_PASSWORD}
-    url: ${POSTGRES_URI}
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/email
 
 security:
   jwt:
@@ -32,10 +31,10 @@ springdoc:
     path: /swagger-ui.html
 
 client:
-  url: http://ms-user:8080
+  url: http://localhost:8080
   emailservice:
     email: ${SERVICE_EMAIL}
-    url: http://ms-parking:8081
+    url: http://localhost:8081
 
 
 mail:

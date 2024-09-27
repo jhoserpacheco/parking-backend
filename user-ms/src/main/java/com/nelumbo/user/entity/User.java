@@ -1,8 +1,10 @@
 package com.nelumbo.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nelumbo.user.utils.Constants;
 import jakarta.persistence.*;
 import lombok.*;
+import org.apache.coyote.BadRequestException;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +24,9 @@ import java.util.UUID;
 @Builder
 @ToString
 public class User implements UserDetails {
+
+    private final static String EMAIL_ADMIN = "admin@mail.com";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "uuid")
@@ -56,6 +61,13 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    public User(String fullName, String email, String password, Rol rol) {
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.rol = rol;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority((getRol().getName())));
@@ -79,6 +91,12 @@ public class User implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    public void isAdminDefault() throws BadRequestException {
+        if (getEmail().equals(EMAIL_ADMIN)){
+            throw new BadRequestException(Constants.Message.IS_ADMIN_DEFAULT);
+        }
     }
 
 }

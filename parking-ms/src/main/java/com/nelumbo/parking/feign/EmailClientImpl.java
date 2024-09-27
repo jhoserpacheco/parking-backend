@@ -1,30 +1,27 @@
 package com.nelumbo.parking.feign;
 
 import com.nelumbo.parking.dto.VehicleDto;
-import com.nelumbo.parking.mgsbroker.RabbitQueueSender;
+import com.nelumbo.parking.exceptions.VehicleNotFoundException;
 import com.nelumbo.parking.service.impl.VehicleServiceImpl;
 import com.nelumbo.parking.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class EmailClientImpl {
 
     private final VehicleServiceImpl vehicleService;
-    private final RabbitQueueSender queueSender;
+    private final EmailClient emailClient;
 
-    public ResponseEmailDto sendEmailIfVehicleExists(EmailParkingDto emailParkingDto) {
+    public ResponseEmailDto sendEmailIfVehicleExists(String token, EmailParkingDto emailParkingDto) {
         Optional<VehicleDto> vehicle = vehicleService.findByVehiclePlate(emailParkingDto.getVehiclePlate());
         if (vehicle.isPresent()) {
-            emailParkingDto.setId(UUID.randomUUID());
-            queueSender.send(emailParkingDto);
-            return new ResponseEmailDto(emailParkingDto.getId(), Constants.EmailTemplate.StatusEmail.PROCESSING.name());
+            return emailClient.sendEmail(token, emailParkingDto);
         } else {
-            throw new RuntimeException(Constants.Message.VEHICLE_NOT_FOUND);
+            throw new VehicleNotFoundException(Constants.Message.VEHICLE_NOT_FOUND);
         }
     }
 }

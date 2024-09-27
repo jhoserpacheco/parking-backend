@@ -2,16 +2,24 @@ package com.nelumbo.parking.service.impl;
 
 import com.nelumbo.parking.dto.ParkingDto;
 import com.nelumbo.parking.entity.Parking;
+import com.nelumbo.parking.exceptions.ParkingNotFoundException;
+import com.nelumbo.parking.exceptions.UserNotFoundException;
 import com.nelumbo.parking.feign.AuthClient;
 import com.nelumbo.parking.feign.UserDto;
 import com.nelumbo.parking.mapper.IParkingMapping;
+import com.nelumbo.parking.projection.ParkingProjection;
 import com.nelumbo.parking.repository.IParkingRepository;
 import com.nelumbo.parking.service.IParkingService;
 import com.nelumbo.parking.utils.AuthUtils;
 import com.nelumbo.parking.utils.Constants;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,12 +36,12 @@ public class ParkingServiceImpl implements IParkingService {
     private final String ROLE_SOCIO = Constants.rol.SOCIO.name();
 
     @Override
-    public ParkingDto save(ParkingDto parking, String token){
+    public ParkingDto save(ParkingDto parking, String token) throws BadRequestException {
         if (validateUser(token, parking.getEmailUser())){
             Parking saveParking = parkingRepository.save(parkingMapper.parkingDtoToParking(parking));
             return parkingMapper.parkingToParkingDto(saveParking);
         }
-        throw new RuntimeException(Constants.Message.USER_NO_REQUIRED_ROLE);
+        throw new BadRequestException(Constants.Message.USER_NO_REQUIRED_ROLE);
     }
 
     @Override
@@ -42,7 +50,7 @@ public class ParkingServiceImpl implements IParkingService {
         if (parking.isPresent()) {
             return Optional.of(parkingMapper.parkingToParkingDto(parking.get()));
         }
-        throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
+        throw new ParkingNotFoundException(Constants.Message.PARKING_NOT_FOUND);
     }
 
     @Override
@@ -62,7 +70,7 @@ public class ParkingServiceImpl implements IParkingService {
             }
             return parkingMapper.parkingToParkingDto(parkingRepository.save(updateParking));
         }
-        throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
+        throw new ParkingNotFoundException(Constants.Message.PARKING_NOT_FOUND);
     }
 
     @Override
@@ -70,19 +78,20 @@ public class ParkingServiceImpl implements IParkingService {
         Optional<ParkingDto> parking = findById(idParking);
         if(parking.isPresent()){
             if (parking.get().getCurrentCapacity() > 0){
-                throw new RuntimeException(Constants.Message.PARKING_DELETE_FAILED);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.Message.PARKING_DELETE_FAILED);
             }
             parkingRepository.deleteById(parking.get().getId());
             return "Parking deleted successfully";
         }
-        throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
+        throw new ParkingNotFoundException(Constants.Message.PARKING_NOT_FOUND);
     }
 
     @Override
-    public void updateCurrentCapacity(UUID idParking){
+    public void updateCurrentCapacity(UUID idParking, boolean entry){
         Optional<ParkingDto> oldParking = findById(idParking);
-        if (oldParking.isPresent()) {
-            oldParking.get().setCurrentCapacity(oldParking.get().getCurrentCapacity() - 1);
+        int countEntry = (entry) ? 1 : -1;
+        if (oldParking.isPresent() && entry) {
+            oldParking.get().setCurrentCapacity(oldParking.get().getCurrentCapacity() + countEntry);
             parkingRepository.saveAndFlush(parkingMapper.parkingDtoToParking(oldParking.get()));
         }
     }
@@ -93,8 +102,14 @@ public class ParkingServiceImpl implements IParkingService {
         return parkingMapper.parkingListToParkingDtoList(parkingList);
     }
 
+    public List<ParkingDto> findAllPage(){
+        List<Parking> parkingList = parkingRepository.findAll();
+        return parkingMapper.parkingListToParkingDtoList(parkingList);
+    }
+
     @Override
     public List<ParkingDto> findAllBySocio(String emailUser){
+        AuthUtils auth = new AuthUtils();
         List<Parking> parkingList = parkingRepository.findAllByEmailUser(emailUser);
         return parkingMapper.parkingListToParkingDtoList(parkingList);
     }
@@ -107,14 +122,14 @@ public class ParkingServiceImpl implements IParkingService {
                 return true;
             }
         }
-        throw new RuntimeException(Constants.Message.USER_NOT_FOUND);
+        throw new UserNotFoundException(Constants.Message.USER_NOT_FOUND);
     }
 
     private boolean validateMaxCapacity(int currentCapacity, int maxCapacity){
         if (currentCapacity < maxCapacity) {
             return true;
         }
-        throw new RuntimeException(Constants.Message.PARKING_MAX_CAPACITY_FAILED);
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.Message.PARKING_MAX_CAPACITY_FAILED);
     }
 
     public void isParkingSocioAsociated(UUID parkingId){
@@ -125,10 +140,14 @@ public class ParkingServiceImpl implements IParkingService {
             if (authUtils.getEmailAuthentication().equals(parking.get().getEmailUser()) || authUtils.getRolAuthentication().equals(ROLE_ADMIN)){
                 return;
             }else{
-                throw new RuntimeException(Constants.Message.PARKING_UNAUTHORIZED);
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,Constants.Message.PARKING_UNAUTHORIZED);
             }
         }
-        throw new RuntimeException(Constants.Message.PARKING_NOT_FOUND);
+        throw new ParkingNotFoundException(Constants.Message.PARKING_NOT_FOUND);
+    }
+
+    public Page<ParkingProjection> getParkingProjections(Pageable pageable) {
+        return parkingRepository.findAllProjection(pageable);
     }
 
 }

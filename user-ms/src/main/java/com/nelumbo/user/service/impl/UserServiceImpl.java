@@ -1,19 +1,22 @@
 package com.nelumbo.user.service.impl;
 
+import com.nelumbo.user.dto.ChangeRolDto;
 import com.nelumbo.user.dto.UserDto;
 import com.nelumbo.user.entity.Rol;
 import com.nelumbo.user.entity.User;
 import com.nelumbo.user.exceptions.UserNotFoundException;
 import com.nelumbo.user.mapper.IUserMapping;
+import com.nelumbo.user.projection.UserProjection;
 import com.nelumbo.user.repository.IRolRepository;
 import com.nelumbo.user.repository.IUserRepository;
 import com.nelumbo.user.service.IUserService;
 import com.nelumbo.user.utils.Constants;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,11 +28,11 @@ public class UserServiceImpl implements IUserService {
     private final IRolRepository roleRepository;
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
-    public void changeRol(String email, int idRol) {
-        Optional<User> user = findByEmail(email);
-        Optional<Rol> rol = roleRepository.findById(idRol);
+    public void changeRol(ChangeRolDto changeRol) throws BadRequestException {
+        Optional<User> user = findByEmail(changeRol.getEmail());
+        Optional<Rol> rol = roleRepository.findById(changeRol.getIdRol());
         if(user.isPresent() && rol.isPresent()){
+            user.get().isAdminDefault();
             user.get().setRol(rol.get());
             save(user.get());
         }else{
@@ -59,14 +62,14 @@ public class UserServiceImpl implements IUserService {
         throw new UserNotFoundException(Constants.Message.USER_NOT_FOUND);
     }
 
-    @Override
-    public List<UserDto> findAllbyRol(int idRol){
-        return IUserMapping.INSTANCE.toDtoList(userRepository.findAllByRolId(idRol));
-    }
+    /*@Override
+    public Page<UserProjection> findAllbyRol(int idRol, Pageable pageable){
+        return userRepository.findAllByRolId(idRol, pageable);
+    }*/
 
     @Override
-    public List<UserDto> findAll() {
-        return IUserMapping.INSTANCE.toDtoList(userRepository.findAll());
+    public Page<UserProjection> findAll(Pageable pageable) {
+        return userRepository.findAllDto(pageable);
     }
 
     @Override
@@ -79,7 +82,6 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
     public void disableByEmail(String email) {
         Optional<User> user = findByEmail(email);
         if(user.isPresent() ){

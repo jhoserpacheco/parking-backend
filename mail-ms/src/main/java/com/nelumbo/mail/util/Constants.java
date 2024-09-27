@@ -1,4 +1,4 @@
-package com.nelumbo.user.utils;
+package com.nelumbo.mail.util;
 
 public class Constants {
     private static final String UTILITY_CLASS = "Utility class";
@@ -9,10 +9,11 @@ public class Constants {
         private Message() {
             throw new IllegalStateException(UTILITY_CLASS);
         }
+        /* email */
+        public static final String STATUS_FAILED = "Name status invalid.";
         /* users */
         public static final String USER_NOT_FOUND  = "User not found";
         public static final String USER_CHANGE_ROL_SUCCESS  = "User change role success";
-        public static final String IS_ADMIN_DEFAULT = "The default admin role cannot be changed.";
 
         /* auth */
         public static final String ACCOUNT_ALREADY_VERIFIED  = "Account is already verified";
@@ -30,6 +31,11 @@ public class Constants {
         }
         public static final String EMAIL_INVALID = "Email must be valid";
         public static final String EMAIL_REQUIRED = "Email is required";
+        public static final String SUBJECT_REQUIRED = "Subject is required";
+        public static final String VEHICLE_PLATE_REQUIRED = "Vehicle plate is required";
+        public static final String TEXT_REQUIRED = "Email body is required";
+        public static final String PARKING_NAME_REQUIRED = "Parking name is required";
+
         public static final String PASSWORD_REQUIRED = "Password is required";
         public static final String ID_ROL_REQUIRED = "Id rol is required";
         public static final String PASSWORD_SIZE = "Password must be at least 8 characters long";

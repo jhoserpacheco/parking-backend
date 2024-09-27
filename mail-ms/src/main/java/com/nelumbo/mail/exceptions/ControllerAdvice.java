@@ -1,14 +1,12 @@
-package com.nelumbo.user.exceptions;
+package com.nelumbo.mail.exceptions;
 
-import com.nelumbo.user.utils.Constants;
+import com.nelumbo.mail.util.Constants;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.log4j.Log4j2;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -69,7 +67,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler({UnsupportedJwtException.class, MissingRequestHeaderException.class,
             ExpiredJwtException.class, MalformedJwtException.class, SignatureException.class,
-            SignatureException.class, AuthorizationDeniedException.class, BadCredentialsException.class})
+            SignatureException.class, AuthorizationDeniedException.class})
     public final ResponseEntity<ErrorModel> unauthorized(Exception exception) {
         ErrorModel errorModel = ErrorModel.builder()
                 .code(HttpStatus.UNAUTHORIZED.toString())
@@ -79,7 +77,7 @@ public class ControllerAdvice {
         return processException(errorModel, exception, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler({UserNotFoundException.class})
+    @ExceptionHandler({EmailNotFoundException.class})
     public final ResponseEntity<ErrorModel> notFound(Exception exception) {
         ErrorModel errorModel = ErrorModel.builder()
                 .code(HttpStatus.NOT_FOUND.toString())
@@ -100,7 +98,7 @@ public class ControllerAdvice {
     }
 
 
-    @ExceptionHandler({IllegalArgumentException.class, BadRequestException.class})
+    @ExceptionHandler({IllegalArgumentException.class})
     public final ResponseEntity<ErrorModel> badRequest(Exception exception) {
         ErrorModel errorModel = ErrorModel.builder()
                 .code(HttpStatus.BAD_REQUEST.toString())
