@@ -1,14 +1,12 @@
-# Usa una imagen de OpenJDK para compilar y ejecutar la aplicación
-FROM openjdk:17-jdk-slim
+# Etapa 1: Compilación con Gradle y JDK 17
+FROM gradle:8.10-jdk17 AS build
+WORKDIR /app
+COPY . .
+RUN gradle bootJar --no-daemon
 
-# Establece el directorio de trabajo dentro del contenedor
-WORKDIR /discover-service
-
-# Copia el archivo JAR generado por Spring Boot (esto requiere que previamente hayas hecho un build con Maven o Gradle)
-COPY build/libs/discover-service-0.0.1-SNAPSHOT.jar /discover-service/app.jar
-
-# Exponer el puerto en el que tu aplicación se ejecuta (8080 por defecto)
+# Etapa 2: Imagen de ejecución con Eclipse Temurin JRE 17
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+COPY --from=build /app/build/libs/discover-service-*.jar /app/app.jar
 EXPOSE 8761
-
-# Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "/discover-service/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

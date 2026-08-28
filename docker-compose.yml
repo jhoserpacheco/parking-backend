@@ -12,6 +12,16 @@ services:
       - ./db-init:/docker-entrypoint-initdb.d
     networks:
       - parking-network
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - parking-network
       
   rabbitmq:
     image: rabbitmq:3-management
@@ -46,11 +56,14 @@ services:
     container_name: ms-mail
     env_file:
       - ./mail-ms/.env
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discover-service:8761/eureka/
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/email
     ports:
       - "8082:8082"
     depends_on:
-      - eureka-server
-      - postgres
+      - discover-service
+      - mongo
       - rabbitmq
     networks:
       - parking-network
@@ -62,10 +75,12 @@ services:
     container_name: ms-user
     env_file:
       - ./user-ms/.env
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discover-service:8761/eureka/
     ports:
       - "8080:8080"
     depends_on:
-      - eureka-server
+      - discover-service
       - postgres
       - rabbitmq
     networks:
@@ -78,10 +93,12 @@ services:
     container_name: ms-parking
     env_file:
       - ./parking-ms/.env
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discover-service:8761/eureka/
     ports:
       - "8081:8081"
     depends_on:
-      - eureka-server
+      - discover-service
       - postgres
       - rabbitmq
     networks:
@@ -92,18 +109,20 @@ services:
       context: ./api-gateway
       dockerfile: Dockerfile
     container_name: api-gateway
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discover-service:8761/eureka/
     ports:
       - "8079:8079"
     depends_on:
-      - eureka-server
+      - discover-service
     networks:
       - parking-network
-      
       
 volumes:
   rabbitmq-data:
     driver: local
   postgres_data:
+  mongo_data:
 
 networks:
   parking-network:
