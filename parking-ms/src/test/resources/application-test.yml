@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:parking-test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+security:
+  jwt:
+    secret-key: test-secret-key-for-parking-service
+    expiration-time: 3600000
+
+rabbitmq:
+  host: localhost
+  port: 5672
+  username: guest
+  password: guest

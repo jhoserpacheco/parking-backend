@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:user-test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+security:
+  jwt:
+    secret-key: test-secret-key-for-user-service
+    expiration-time: 3600000
+
+client:
+  emailservice:
+    email: test@example.com
+
+rabbitmq:
+  host: localhost
+  port: 5672
+  username: guest
+  password: guest

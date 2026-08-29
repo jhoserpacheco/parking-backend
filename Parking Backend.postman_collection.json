@@ -98,7 +98,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "// admin\r\n\r\n{\r\n    \"email\": \"admin@mail.com\",\r\n    \"password\": \"admin\"\r\n}\r\n\r\n/* socio1\r\n{\r\n    \"email\": \"socio1@gmail.com\",\r\n    \"password\": \"socio1\"\r\n}\r\n\r\n*/\r\n/* socio2\r\n{\r\n    \"email\": \"socio2@gmail.com\",\r\n    \"password\": \"socio2\"\r\n}\r\n\r\n*/",
+									"raw": "{\r\n    \"email\": \"admin@mail.com\",\r\n    \"password\": \"admin\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -116,6 +116,18 @@
 									]
 								}
 							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"Login successful\", function () { pm.response.to.have.status(200); });",
+											"pm.collectionVariables.set(\"token-admin\", pm.response.json().token);"
+										]
+									}
+								}
+							],
 							"response": []
 						},
 						{
@@ -152,7 +164,7 @@
 					"name": "User",
 					"item": [
 						{
-							"name": "Get User By Rol",
+							"name": "Get Users",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -167,18 +179,21 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{ms-user-url}}/user/getAllByRol?idRol=1",
+									"raw": "{{ms-user-url}}/user?page=0&size=20",
 									"host": [
 										"{{ms-user-url}}"
 									],
 									"path": [
-										"user",
-										"getAllByRol"
+										"user"
 									],
 									"query": [
 										{
-											"key": "idRol",
-											"value": "1"
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "20"
 										}
 									]
 								}
@@ -198,32 +213,25 @@
 										}
 									]
 								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "idRol",
-										"value": "1",
-										"type": "text"
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"admin@mail.com\",\r\n    \"idRol\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
 									}
-								],
+								},
 								"url": {
-									"raw": "{{ms-user-url}}/user/changeRol?email=admin@gmail.com&idRol=2",
+									"raw": "{{ms-user-url}}/user/change-rol",
 									"host": [
 										"{{ms-user-url}}"
 									],
 									"path": [
 										"user",
-										"changeRol"
-									],
-									"query": [
-										{
-											"key": "email",
-											"value": "admin@gmail.com"
-										},
-										{
-											"key": "idRol",
-											"value": "2"
-										}
+										"change-rol"
 									]
 								}
 							},
@@ -245,18 +253,18 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{ms-user-url}}/user/getByEmail?email=jhoserpacheco@gmail.com",
+									"raw": "{{ms-user-url}}/user/by-email?email=admin@mail.com",
 									"host": [
 										"{{ms-user-url}}"
 									],
 									"path": [
 										"user",
-										"getByEmail"
+										"by-email"
 									],
 									"query": [
 										{
 											"key": "email",
-											"value": "jhoserpacheco@gmail.com"
+											"value": "admin@mail.com"
 										}
 									]
 								}
@@ -540,7 +548,7 @@
 							"response": []
 						},
 						{
-							"name": "Register entry vehicle Copy",
+							"name": "Register exit vehicle",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1019,9 +1027,9 @@
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
-				"exec": [
-					""
-				]
+					"exec": [
+						"pm.test(\"Successful response\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]); });"
+					]
 			}
 		},
 		{
@@ -1029,7 +1037,7 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					""
+					"pm.test(\"Successful response\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]); });"
 				]
 			}
 		}
@@ -1037,11 +1045,11 @@
 	"variable": [
 		{
 			"key": "token-admin",
-			"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTcyNTUxMDg0OSwiZXhwIjoxNzI1NTMyNDQ5LCJyb2wiOiJBRE1JTiJ9.aJM_aiiFUUyV8MY8f3A6-GB9DXsfvO4t9ICfHuxuvDA0s3Dr5HZ99GnYEH8vfkMT"
+			"value": ""
 		},
 		{
 			"key": "token-socio",
-			"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJqaG9zZXJwYWNoZWNvQGdtYWlsLmNvbSIsImlhdCI6MTcyNjI2Mzg1NiwiZXhwIjoxNzI2Mjg1NDU2LCJyb2wiOiJTT0NJTyJ9.txpw-9ahhGKFm2n4ShL56eBYobREP-v109RjUZ0TpkwzLOpb3rD7HBRf3XdnGaue",
+			"value": "",
 			"type": "string"
 		},
 		{

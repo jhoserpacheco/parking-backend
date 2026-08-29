@@ -32,6 +32,7 @@ public class ParkingServiceImpl implements IParkingService {
     private final IParkingRepository parkingRepository;
     private final IParkingMapping parkingMapper = IParkingMapping.INSTANCE;
     private final AuthClient authClient;
+    private final AuthUtils authUtils;
 
     private final String ROLE_SOCIO = Constants.rol.SOCIO.name();
 
@@ -89,10 +90,11 @@ public class ParkingServiceImpl implements IParkingService {
     @Override
     public void updateCurrentCapacity(UUID idParking, boolean entry){
         Optional<ParkingDto> oldParking = findById(idParking);
-        int countEntry = (entry) ? 1 : -1;
-        if (oldParking.isPresent() && entry) {
-            oldParking.get().setCurrentCapacity(oldParking.get().getCurrentCapacity() + countEntry);
-            parkingRepository.saveAndFlush(parkingMapper.parkingDtoToParking(oldParking.get()));
+        if (oldParking.isPresent()) {
+            ParkingDto parking = oldParking.get();
+            int newCapacity = entry ? parking.getCurrentCapacity() + 1 : Math.max(0, parking.getCurrentCapacity() - 1);
+            parking.setCurrentCapacity(newCapacity);
+            parkingRepository.saveAndFlush(parkingMapper.parkingDtoToParking(parking));
         }
     }
 
@@ -109,7 +111,6 @@ public class ParkingServiceImpl implements IParkingService {
 
     @Override
     public List<ParkingDto> findAllBySocio(String emailUser){
-        AuthUtils auth = new AuthUtils();
         List<Parking> parkingList = parkingRepository.findAllByEmailUser(emailUser);
         return parkingMapper.parkingListToParkingDtoList(parkingList);
     }
@@ -133,7 +134,6 @@ public class ParkingServiceImpl implements IParkingService {
     }
 
     public void isParkingSocioAsociated(UUID parkingId){
-        AuthUtils authUtils = new AuthUtils();
         Optional<Parking> parking = parkingRepository.findById(parkingId);
         if(parking.isPresent()){
             String ROLE_ADMIN = "ADMIN";

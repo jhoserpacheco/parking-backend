@@ -13,19 +13,31 @@ import com.nelumbo.parking.mapper.IVehicleMapping;
 import com.nelumbo.parking.projection.EstimateCostProjection;
 import com.nelumbo.parking.repository.IParkingHistoryRepository;
 import com.nelumbo.parking.service.IParkingServiceHistory;
+import com.nelumbo.parking.service.observer.event.VehicleEntryEvent;
+import com.nelumbo.parking.service.observer.event.VehicleExitEvent;
+import com.nelumbo.parking.service.strategy.ParkingTariffStrategy;
+import com.nelumbo.parking.service.strategy.TariffStrategyFactory;
 import com.nelumbo.parking.utils.Constants;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Implementación del servicio de historial de parqueo refactorizado con Patrones de Diseño GoF:
+ * - Strategy: Cálculo de tarifas desacoplado mediante TariffStrategyFactory y ParkingTariffStrategy.
+ * - Observer: Desacoplamiento de efectos secundarios (capacidad y notificaciones) mediante ApplicationEventPublisher.
+ */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
@@ -33,13 +45,16 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
     private final IParkingHistoryRepository parkingHistoryRepository;
     private final VehicleServiceImpl vehicleService;
     private final ParkingServiceImpl parkingService;
+    private final TariffStrategyFactory tariffStrategyFactory;
+    private final ApplicationEventPublisher eventPublisher;
+
     private final IParkingHistoryMapping parkingHistoryMapping = IParkingHistoryMapping.INSTANCE;
     private final IVehicleMapping vehicleMapping = IVehicleMapping.INSTANCE;
     private final IParkingMapping parkingMapping = IParkingMapping.INSTANCE;
 
     @Override
+    @Transactional
     public RegisterParkingDto registerEntry(VehicleDto vehicleDto, UUID parkingId) {
-        boolean entry = true;
         Optional<ParkingDto> parking = parkingService.findById(parkingId);
         if (parking.isEmpty()) {
             throw new ParkingNotFoundException(Constants.Message.PARKING_NOT_FOUND);
@@ -47,6 +62,7 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
         parkingService.isParkingSocioAsociated(parkingId);
         Optional<VehicleDto> existingVehicle = vehicleService.findByVehiclePlate(vehicleDto.getVehiclePlate());
         validateRegister(vehicleDto.getVehiclePlate());
+
         VehicleDto vehicleToUse;
         if (existingVehicle.isPresent()) {
             vehicleDto.setIdParking(parkingId);
@@ -56,13 +72,22 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
             vehicleDto.setIdParking(parkingId);
             vehicleToUse = vehicleService.save(vehicleDto);
         }
-        parkingService.updateCurrentCapacity(parkingId, entry);
+
         ParkingHistory parkingHistory = save(parking.get(), vehicleToUse);
-        return new RegisterParkingDto(parkingId, Constants.Message.REGISTER_ENTRY,vehicleToUse.getVehiclePlate(), parkingHistory.getEntryDate());
+
+        eventPublisher.publishEvent(VehicleEntryEvent.builder()
+                .parkingId(parkingId)
+                .vehiclePlate(vehicleToUse.getVehiclePlate())
+                .vehicleModel(vehicleToUse.getModel())
+                .entryDate(parkingHistory.getEntryDate())
+                .socioEmail(parking.get().getEmailUser())
+                .build());
+
+        return new RegisterParkingDto(parkingId, Constants.Message.REGISTER_ENTRY, vehicleToUse.getVehiclePlate(), parkingHistory.getEntryDate());
     }
 
     @Override
-    public ParkingHistory save(ParkingDto parking, VehicleDto vehicle){
+    public ParkingHistory save(ParkingDto parking, VehicleDto vehicle) {
         ParkingHistory parkingHistory = new ParkingHistory();
         parkingHistory.setParking(parkingMapping.parkingDtoToParking(parking));
         parkingHistory.setVehicle(vehicleMapping.vehicleDtoToVehicle(vehicle));
@@ -71,25 +96,37 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
         return parkingHistoryRepository.save(parkingHistory);
     }
 
-    private void validateRegister(String vehiclePlate){
-        Optional<ParkingHistory> parkingHistory = parkingHistoryRepository.
-                findByVehicleVehiclePlateAndExitDateIsNull(vehiclePlate);
+    private void validateRegister(String vehiclePlate) {
+        Optional<ParkingHistory> parkingHistory = parkingHistoryRepository
+                .findByVehicleVehiclePlateAndExitDateIsNull(vehiclePlate);
         if (parkingHistory.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,Constants.Message.REGISTER_ENTRY_FAILED);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.Message.REGISTER_ENTRY_FAILED);
         }
     }
 
     @Override
+    @Transactional
     public RegisterParkingDto registerExit(VehicleDto vehicle, UUID parkingId) {
-        boolean entry = false;
         parkingService.isParkingSocioAsociated(parkingId);
         Optional<VehicleDto> vehicleDto = vehicleService.findByVehiclePlate(vehicle.getVehiclePlate());
         if (vehicleDto.isPresent() && vehicleDto.get().getIdParking().equals(parkingId)) {
             Optional<ParkingHistoryDto> parkingHistory = findParkingHistoryByVehiclePlateAndParkingId(
                     vehicleDto.get().getVehiclePlate(), parkingId);
             if (parkingHistory.isPresent()) {
-                parkingService.updateCurrentCapacity(parkingId, entry);
                 ParkingHistoryDto parkingHistoryDto = update(parkingHistory.get());
+
+                String socioEmail = parkingService.findById(parkingId).map(ParkingDto::getEmailUser).orElse(null);
+
+                eventPublisher.publishEvent(VehicleExitEvent.builder()
+                        .parkingId(parkingId)
+                        .vehiclePlate(vehicleDto.get().getVehiclePlate())
+                        .vehicleModel(vehicleDto.get().getModel())
+                        .entryDate(parkingHistoryDto.getEntryDate())
+                        .exitDate(parkingHistoryDto.getExitDate())
+                        .totalCost(parkingHistoryDto.getTotalCost())
+                        .socioEmail(socioEmail)
+                        .build());
+
                 return new RegisterParkingDto(parkingId, Constants.Message.REGISTER_EXIT, vehicleDto.get().getVehiclePlate(), parkingHistoryDto.getExitDate());
             }
         }
@@ -97,6 +134,7 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
     }
 
     @Override
+    @Transactional
     public ParkingHistoryDto update(ParkingHistoryDto parkingHistoryDto) {
         Optional<ParkingHistory> parking = parkingHistoryRepository
                 .findByVehicleVehiclePlateAndParkingIdAndExitDateIsNull(parkingHistoryDto.getVehiclePlate(), parkingHistoryDto.getIdParking());
@@ -104,7 +142,13 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
             LocalDateTime entryDate = parkingHistoryDto.getEntryDate();
             LocalDateTime exitDate = LocalDateTime.now();
             parking.get().setExitDate(exitDate);
-            parking.get().setTotalCost(calculateCostParking(parking.get().getParking().getCostHour(), entryDate, exitDate));
+
+            double costHour = parking.get().getParking().getCostHour();
+            String vehicleModel = parking.get().getVehicle() != null ? parking.get().getVehicle().getModel() : "";
+            ParkingTariffStrategy strategy = tariffStrategyFactory.getStrategy(vehicleModel, entryDate, exitDate);
+            double calculatedCost = strategy.calculateCost(entryDate, exitDate, costHour);
+
+            parking.get().setTotalCost(calculatedCost);
             ParkingHistory updateParkingHistory = parkingHistoryRepository.save(parking.get());
 
             return parkingHistoryMapping.parkingHistoryToParkingHistoryDto(updateParkingHistory);
@@ -113,20 +157,13 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
     }
 
     public Optional<ParkingHistoryDto> findParkingHistoryByVehiclePlateAndParkingId(String vehiclePlate, UUID parkingId) {
-        Optional<ParkingHistory> parkingHistory = parkingHistoryRepository.findByVehicleVehiclePlateAndParkingIdAndExitDateIsNull(vehiclePlate, parkingId);
+        Optional<ParkingHistory> parkingHistory = parkingHistoryRepository
+                .findByVehicleVehiclePlateAndParkingIdAndExitDateIsNull(vehiclePlate, parkingId);
         return parkingHistory.map(parkingHistoryMapping::parkingHistoryToParkingHistoryDto);
     }
 
-    private double calculateCostParking(double costHour, LocalDateTime entryDate, LocalDateTime exitDate){
-        Duration duration = Duration.between(entryDate, exitDate);
-        long oneHourInMinutes = 60;
-        long totalMin = duration.toMinutes() / oneHourInMinutes;
-        long totalHour = (totalMin % 60 == 0) ? totalMin : totalMin + 1;
-        return costHour * totalHour;
-    }
-
     public Page<ParkingHistory> getParkingHistorySorted(Pageable pageable, String query) {
-        if (query==null) query = "";
+        if (query == null) query = "";
         return parkingHistoryRepository.findAllOrdered(pageable, query);
     }
 
@@ -134,6 +171,4 @@ public class ParkingServiceHistoryImpl implements IParkingServiceHistory {
         parkingService.isParkingSocioAsociated(parkingId);
         return parkingHistoryRepository.findEstimateCostByParkingId(parkingId);
     }
-
-
 }

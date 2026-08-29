@@ -1,22 +1,31 @@
 package com.nelumbo.parking.utils;
 
 import com.nelumbo.parking.feign.UserDto;
-import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
+/**
+ * Componente de utilidad para extraer la información del usuario autenticado en el SecurityContext.
+ */
+@Component
 public class AuthUtils {
 
-    public String getEmailAuthentication(){
-        UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userDto.getEmail();
+    public String getEmailAuthentication() {
+        UserDto userDto = getUserAuthentication();
+        return userDto != null ? userDto.getEmail() : "";
     }
-    public String getRolAuthentication(){
-        UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userDto.getRol();
+
+    public String getRolAuthentication() {
+        UserDto userDto = getUserAuthentication();
+        return userDto != null ? userDto.getRol() : "";
     }
-    public UserDto getUserAuthentication(){
-        UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userDto;
+
+    public UserDto getUserAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDto) {
+            return (UserDto) authentication.getPrincipal();
+        }
+        return null;
     }
 }
